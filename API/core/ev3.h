@@ -40,13 +40,13 @@ extern "C" {
 #include <string.h>
 #include <stdbool.h>
 
-#include <ev3_constants.h>
-#include <ev3_command.h>
-#include <ev3_output.h>
-#include <ev3_sensor.h>
-#include <ev3_button.h>
-#include <ev3_lcd.h>
-#include <ev3_sound.h>
+#include "ev3_constants.h"
+#include "ev3_command.h"
+#include "ev3_output.h"
+#include "ev3_sensor.h"
+#include "ev3_button.h"
+#include "ev3_lcd.h"
+#include "ev3_sound.h"
 
 int InitEV3(void);
 int FreeEV3(void);
