@@ -9,7 +9,7 @@
 
 namespace ev3 {
 
-Motor::Motor() {
+Motor::Motor(Port port) {
 	// TODO Auto-generated constructor stub
 
 }

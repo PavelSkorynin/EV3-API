@@ -8,7 +8,7 @@
 #ifndef MOTOR_H_
 #define MOTOR_H_
 
-#include "ev3_constants.h"
+#include "core/ev3_constants.h"
 
 #include <memory>
 
