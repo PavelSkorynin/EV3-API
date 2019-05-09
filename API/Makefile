@@ -9,6 +9,7 @@ CORE_OBJS = $(patsubst %.c,out/%.o,$(CORE_SRCS))
 CFLAGS += -fno-strict-aliasing
 
 .DEFAULT: libev3apicore.a
+all: libev3apicore.a
 libev3apicore.a: $(CORE_OBJS)
 	$(AR) rcs $@ $^
 
