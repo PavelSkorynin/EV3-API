@@ -13,8 +13,8 @@ namespace ev3 {
 
 Motor::Motor(Port port)
 	: port(port)
-	, zeroEncoder(0)
 	, direction(FORWARD)
+	, zeroEncoder(0)
 	, speedInput([this]() { return actualSpeed; })
 	, encoderInput([this]() { return direction == FORWARD ? encoder - zeroEncoder : zeroEncoder - encoder; })
 {
@@ -60,6 +60,7 @@ void Motor::updateInputs() {
 	int tacho;
 	int sensor;
 	OutputRead(port, &speed, &tacho, &sensor);
+	// tacho or sensor ??
 	encoder = tacho;
 	actualSpeed = speed;
 }
