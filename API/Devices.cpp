@@ -9,8 +9,7 @@
 
 namespace ev3 {
 
-//	static Devices instance;
-
+	Devices Devices::instance = Devices();
 
 	std::shared_ptr<Sensor> Devices::getSensor(Sensor::Port port) {
 		auto sensorPtr = instance.sensors[port];
