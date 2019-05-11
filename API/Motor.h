@@ -25,7 +25,6 @@ public:
 		D = OUT_D
 	};
 
-	Motor(Port port);
 	~Motor();
 
 	inline Port getPort() const {
@@ -51,6 +50,10 @@ protected:
 	std::shared_ptr<WireI> encoderInput;
 	std::weak_ptr<WireI> powerOutput;
 	std::weak_ptr<WireI> speedOutput;
+
+	Motor(Port port);
+
+	friend class Devices;
 };
 
 } /* namespace ev3 */

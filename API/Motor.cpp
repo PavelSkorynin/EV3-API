@@ -49,11 +49,14 @@ void Motor::updateInputs() {
 
 void Motor::updateOutputs() {
 	if (auto ptr = powerOutput.lock()) {
-		auto value = ptr->getValue();
-		OutputPower(port, value);
+		if (!OutputPower(port, ptr->getValue())) {
+			printf("Failed to set power for motor on port %d\n", port);
+		}
 	}
 	else if (auto ptr = speedOutput.lock()) {
-		OutputSpeed(port, (int8_t)ptr->getValue());
+		if (!OutputSpeed(port, ptr->getValue())) {
+			printf("Failed to set speed for motor on port %d\n", port);
+		}
 	}
 }
 
