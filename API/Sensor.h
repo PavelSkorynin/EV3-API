@@ -64,7 +64,7 @@ public:
 		return mode;
 	}
 
-	std::weak_ptr<WireI> getValue() const;
+	WireI getValue() const;
 
 	void setMode(const Mode & mode);
 
@@ -79,9 +79,9 @@ protected:
 
 	int value;
 
-	std::shared_ptr<WireI> valueInput;
+	WireI valueInput;
 
-	friend class Devices;
+	friend class EV3;
 };
 
 } /* namespace ev3 */

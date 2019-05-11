@@ -14,14 +14,14 @@ Sensor::Sensor(Port port)
 	: port(port)
 	, mode(NO_SENSOR)
 	, value(0)
-	, valueInput(std::make_shared<WireI>([this] { return value; })) {
+	, valueInput([this] { return value; }) {
 
 }
 
 Sensor::~Sensor() {
 }
 
-std::weak_ptr<WireI> Sensor::getValue() const {
+WireI Sensor::getValue() const {
 	return valueInput;
 }
 
@@ -31,7 +31,8 @@ void Sensor::setMode(const Mode & mode) {
 	}
 
 	this->mode = mode;
-	if (SetSensorMode(port, mode) != 0) {
+	if (SetSensorMode(port, mode) != 0)
+	{
 		printf("Failed to set mode %d for sensor at port %d", mode, port);
 		return;
 	}

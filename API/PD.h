@@ -18,8 +18,8 @@ public:
 	PD(float kp = 0.4f, float kd = 1.2f);
 	~PD();
 
-	void setError(const std::weak_ptr<WireF> & errorWire);
-	std::weak_ptr<WireF> getPower();
+	void setError(const WireF & errorWire);
+	WireF getPower();
 
 	void update(float secondsFromStart) override;
 
@@ -30,8 +30,8 @@ protected:
 	float lastUpdateTime;
 	float power;
 
-	std::weak_ptr<WireF> errorWire;
-	std::shared_ptr<WireF> powerWire;
+	std::shared_ptr<WireF> errorWire;
+	WireF powerWire;
 };
 
 } /* namespace ev3 */

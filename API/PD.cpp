@@ -18,27 +18,26 @@ PD::PD(float kp, float kd)
 	, lastError(0.0f)
 	, lastUpdateTime(0.0f)
 	, power(0.0f)
+	, powerWire([this] { return power; })
 {
-	powerWire = std::make_shared<WireF>([this] { return power; });
 }
 
 PD::~PD() {
 }
 
-void PD::setError(const std::weak_ptr<WireF> & errorWire) {
-	this->errorWire = errorWire;
+void PD::setError(const WireF & errorWire) {
+	this->errorWire = std::make_shared<WireF>(errorWire);
 }
 
-std::weak_ptr<WireF> PD::getPower() {
+WireF PD::getPower() {
 	return powerWire;
 }
 
 void PD::update(float secondsFromStart) {
-	auto errorPtr = errorWire.lock();
-	if (!errorPtr) {
+	if (!errorWire) {
 		return;
 	}
-	float error = errorPtr->getValue();
+	float error = errorWire->getValue();
 
 	float dErr = (error - lastError);
 

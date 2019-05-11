@@ -25,35 +25,49 @@ public:
 		D = OUT_D
 	};
 
+	enum Direction {
+		FORWARD = OUT_FWD,
+		BACKWRAD = OUT_REV
+	};
+
 	~Motor();
 
 	inline Port getPort() const {
 		return port;
 	}
 
-	std::weak_ptr<WireI> getActualSpeed() const;
-	std::weak_ptr<WireI> getEncoder() const;
+	inline Direction getDirection() const {
+		return direction;
+	}
+	void setDirection(const Direction & direction);
 
-	void setPower(const std::weak_ptr<WireI> & output);
-	void setSpeed(const std::weak_ptr<WireI> & output);
+	WireI getActualSpeed() const;
+	WireI getEncoder() const;
+
+	void setPower(const WireI & output);
+	void setSpeed(const WireI & output);
+
+	void resetEncoder();
 
 	void updateInputs() override;
 	void updateOutputs() override;
 
 protected:
 	Port port;
+	Direction direction;
 
 	int actualSpeed;
+	int zeroEncoder;
 	int encoder;
 
-	std::shared_ptr<WireI> speedInput;
-	std::shared_ptr<WireI> encoderInput;
-	std::weak_ptr<WireI> powerOutput;
-	std::weak_ptr<WireI> speedOutput;
+	WireI speedInput;
+	WireI encoderInput;
+	std::shared_ptr<WireI> powerOutput;
+	std::shared_ptr<WireI> speedOutput;
 
 	Motor(Port port);
 
-	friend class Devices;
+	friend class EV3;
 };
 
 } /* namespace ev3 */

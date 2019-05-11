@@ -13,29 +13,46 @@ namespace ev3 {
 
 Motor::Motor(Port port)
 	: port(port)
+	, zeroEncoder(0)
+	, direction(FORWARD)
+	, speedInput([this]() { return actualSpeed; })
+	, encoderInput([this]() { return direction == FORWARD ? encoder - zeroEncoder : zeroEncoder - encoder; })
 {
+	Fwd(port);
 	updateInputs();
-	speedInput = std::make_shared<WireI>([this]() { return actualSpeed; });
-	encoderInput = std::make_shared<WireI>([this]() { return encoder; });
+	resetEncoder();
 }
 
 Motor::~Motor() {
 }
 
-std::weak_ptr<WireI> Motor::getActualSpeed() const {
+void Motor::setDirection(const Direction & direction) {
+	if (this->direction == direction) {
+		return;
+	}
+
+	this->direction = direction;
+	SetDirection(port, direction);
+}
+
+WireI Motor::getActualSpeed() const {
 	return speedInput;
 }
 
-std::weak_ptr<WireI> Motor::getEncoder() const {
+WireI Motor::getEncoder() const {
 	return encoderInput;
 }
 
-void Motor::setPower(const std::weak_ptr<WireI> & output) {
-	powerOutput = output;
+void Motor::setPower(const WireI & output) {
+	powerOutput = std::make_shared<WireI>(output);
 }
 
-void Motor::setSpeed(const std::weak_ptr<WireI> & output) {
-	speedOutput = output;
+void Motor::setSpeed(const WireI & output) {
+	speedOutput = std::make_shared<WireI>(output);
+}
+
+void Motor::resetEncoder() {
+	zeroEncoder = encoder;
 }
 
 void Motor::updateInputs() {
@@ -48,13 +65,13 @@ void Motor::updateInputs() {
 }
 
 void Motor::updateOutputs() {
-	if (auto ptr = powerOutput.lock()) {
-		if (!OutputPower(port, ptr->getValue())) {
+	if (powerOutput) {
+		if (!OutputPower(port, powerOutput->getValue())) {
 			printf("Failed to set power for motor on port %d\n", port);
 		}
 	}
-	else if (auto ptr = speedOutput.lock()) {
-		if (!OutputSpeed(port, ptr->getValue())) {
+	else if (speedOutput) {
+		if (!OutputSpeed(port, speedOutput->getValue())) {
 			printf("Failed to set speed for motor on port %d\n", port);
 		}
 	}
