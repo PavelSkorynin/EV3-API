@@ -18,7 +18,7 @@ namespace ev3 {
 
 class Sensor: public Device {
 public:
-	enum Port {
+	enum class Port {
 		P1 = IN_1,
 		P2 = IN_2,
 		P3 = IN_3,

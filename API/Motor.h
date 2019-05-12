@@ -18,14 +18,14 @@ namespace ev3 {
 
 class Motor : public Device {
 public:
-	enum Port {
+	enum class Port {
 		A = OUT_A,
 		B = OUT_B,
 		C = OUT_C,
 		D = OUT_D
 	};
 
-	enum Direction {
+	enum class Direction {
 		FORWARD = OUT_FWD,
 		BACKWRAD = OUT_REV
 	};

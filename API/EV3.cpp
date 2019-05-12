@@ -46,8 +46,12 @@ namespace ev3 {
 		return current_timestamp() - instance->zeroTimestamp;
 	}
 
+	void EV3::wait(float seconds) {
+		Wait((int)(seconds * 1000));
+	}
+
 	std::shared_ptr<Sensor> EV3::getSensor(Sensor::Port port, Sensor::Mode mode) {
-		auto sensorPtr = instance->sensors[port];
+		auto& sensorPtr = instance->sensors[port];
 		if (!sensorPtr) {
 			sensorPtr.reset(new Sensor(port));
 		}
@@ -58,7 +62,7 @@ namespace ev3 {
 	}
 
 	std::shared_ptr<Motor> EV3::getMotor(Motor::Port port) {
-		auto motorPtr = instance->motors[port];
+		auto& motorPtr = instance->motors[port];
 		if (!motorPtr) {
 			motorPtr.reset(new Motor(port));
 		}
@@ -66,19 +70,19 @@ namespace ev3 {
 	}
 
 	void EV3::updateInputs() {
-		for (const auto& pair : instance->sensors) {
+		for (auto& pair : instance->sensors) {
 			pair.second->updateInputs();
 		}
-		for (const auto& pair : instance->motors) {
+		for (auto& pair : instance->motors) {
 			pair.second->updateInputs();
 		}
 	}
 
 	void EV3::updateOutputs() {
-		for (const auto& pair : instance->sensors) {
+		for (auto& pair : instance->sensors) {
 			pair.second->updateOutputs();
 		}
-		for (const auto& pair : instance->motors) {
+		for (auto& pair : instance->motors) {
 			pair.second->updateOutputs();
 		}
 	}

@@ -18,12 +18,14 @@ Motor::Motor(Port port)
 	, speedInput([this]() { return actualSpeed; })
 	, encoderInput([this]() { return direction == FORWARD ? encoder - zeroEncoder : zeroEncoder - encoder; })
 {
+	OnEx(port, RESET_NONE);
 	Fwd(port);
 	updateInputs();
 	resetEncoder();
 }
 
 Motor::~Motor() {
+	OffEx(port, RESET_NONE);
 }
 
 void Motor::setDirection(const Direction & direction) {
@@ -45,10 +47,12 @@ WireI Motor::getEncoder() const {
 
 void Motor::setPower(const WireI & output) {
 	powerOutput = std::make_shared<WireI>(output);
+	updateOutputs();
 }
 
 void Motor::setSpeed(const WireI & output) {
 	speedOutput = std::make_shared<WireI>(output);
+	updateOutputs();
 }
 
 void Motor::resetEncoder() {
