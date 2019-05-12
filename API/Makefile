@@ -45,14 +45,10 @@ out/obj/%.o: %
 	
 out/include/%.h: %.h
 	$(MKDIR) $(call FixPath,$(@D)) || @echo
-	$(COPY) $(call FixPath,$<) $@
+	$(COPY) $(call FixPath,$<) $(call FixPath,$@)
 
 example:
 	echo 'int main(void) { return EV3IsInitialized() == 1; }' | $(CC) -xc $(CFLAGS) - -L. -lev3apicore -I. -oexample -include core/ev3.h
-
-#ifeq ($(OS),Windows_NT)
-#RM = del /Q
-#endif
 
 .PHONY: clean
 clean:
