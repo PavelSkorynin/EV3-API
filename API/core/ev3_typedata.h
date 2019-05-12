@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef EV3_TYPEDATA_H_
 #define EV3_TYPEDATA_H_
@@ -91,3 +94,7 @@ DEVCON;
 //#define   IIC_SET                 _IOWR('i',6,IICSTR)
 
 #endif //EV3_TYPEDATA_H_
+
+#ifdef __cplusplus
+}
+#endif

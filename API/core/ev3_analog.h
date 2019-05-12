@@ -1,4 +1,8 @@
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef EV3_ANALOG_H_
 #define EV3_ANALOG_H_
 
@@ -73,3 +77,9 @@ typedef   struct
 ANALOG;
 
 #endif //EV3_ANALOG_H_
+
+#ifdef __cplusplus
+}
+#endif
+
+

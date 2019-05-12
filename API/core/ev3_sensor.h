@@ -24,6 +24,11 @@
 * \note Correct data for Touch-, Sonar- and Lightsensor
 *
 */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef EV3SENSOR_H
 #define EV3SENSOR_H
 
@@ -168,3 +173,8 @@ int SetIRBeaconCH(int sensorPort, int channel);
 
 
 #endif // EV3SENSOR_H
+
+#ifdef __cplusplus
+}
+#endif
+

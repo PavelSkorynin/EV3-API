@@ -1,4 +1,8 @@
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef EV3_IIC_H_
 #define EV3_IIC_H_
 
@@ -63,3 +67,8 @@ IICDAT;
 
 
 #endif //EV3_IIC_H_
+
+#ifdef __cplusplus
+}
+#endif
+

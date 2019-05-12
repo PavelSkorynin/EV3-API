@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef EV3_UART_H_
 #define EV3_UART_H_
@@ -39,3 +42,7 @@ typedef   struct
 UART;
 
 #endif //EV3_UART_H_
+
+#ifdef __cplusplus
+}
+#endif

@@ -1,4 +1,8 @@
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef EV3_BASICTYPES_H_
 #define EV3_BASICTYPES_H_
 
@@ -17,3 +21,8 @@ typedef   int16_t                 DATA16; //!< VM Type for 2 byte signed value
 typedef   float                 DATAF;  //!< VM Type for 4 byte floating point value
 
 #endif //EV3_BASICTYPES_H_
+
+#ifdef __cplusplus
+}
+#endif
+
