@@ -1,3 +1,4 @@
+# WARNING: Documentation is outdated.
 # EV3-API [![Build Status](https://travis-ci.org/c4ev3/EV3-API.svg?branch=master)](https://travis-ci.org/c4ev3/EV3-API) [![Gitter Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/c4ev3/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 This API supports the follwing functionallity:
