@@ -15,7 +15,7 @@
  *
  */
 
-#include "ev3.h"
+#include "ev3_core.h"
 
 static bool initialized;
 int __attribute__((constructor)) InitEV3 (void)

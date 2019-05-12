@@ -38,8 +38,8 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <stdint.h>
-#include "ev3.h"
 #include "ev3_analog.h"
+#include "ev3_core.h"
 #include "ev3_iic.h"
 #include "ev3_uart.h"
 

@@ -7,7 +7,7 @@
 
 #include "EV3.h"
 
-#include "core/ev3.h"
+#include "core/ev3_core.h"
 
 namespace ev3 {
 
