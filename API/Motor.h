@@ -18,7 +18,7 @@ namespace ev3 {
 
 class Motor : public Device {
 public:
-	enum class Port {
+	enum class Port : uint8_t {
 		A = OUT_A,
 		B = OUT_B,
 		C = OUT_C,
@@ -27,7 +27,7 @@ public:
 
 	enum class Direction {
 		FORWARD = OUT_FWD,
-		BACKWRAD = OUT_REV
+		BACKWARD = OUT_REV
 	};
 
 	~Motor();
@@ -56,7 +56,7 @@ protected:
 	Port port;
 	Direction direction;
 
-	int actualSpeed;
+	int8_t actualSpeed;
 	int zeroEncoder;
 	int encoder;
 

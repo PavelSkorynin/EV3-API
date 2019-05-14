@@ -10,12 +10,16 @@
 
 namespace ev3 {
 
+template<typename T>
+inline uint8_t P(const T &value) {
+	return static_cast<uint8_t>(value);
+}
+
 Sensor::Sensor(Port port)
 	: port(port)
-	, mode(NO_SENSOR)
+	, mode(Mode::NO_SENSOR)
 	, value(0)
-	, valueInput([this] { return value; }) {
-
+	, valueInput([this] { return this->value; }) {
 }
 
 Sensor::~Sensor() {
@@ -31,9 +35,9 @@ void Sensor::setMode(const Mode & mode) {
 	}
 
 	this->mode = mode;
-	if (SetSensorMode(port, mode) != 0)
+	if (SetSensorMode(P(port), P(mode)) != 0)
 	{
-		printf("Failed to set mode %d for sensor at port %d", mode, port);
+//		printf("Failed to set mode %d for sensor at port %d", P(mode), P(port));
 		return;
 	}
 
@@ -41,7 +45,7 @@ void Sensor::setMode(const Mode & mode) {
 }
 
 void Sensor::updateInputs() {
-	value = ReadSensor(port);
+	value = ReadSensor(P(port));
 }
 
 void Sensor::updateOutputs() {

@@ -16,35 +16,30 @@ namespace ev3 {
 template<typename T>
 class Wire {
 public:
-	Wire(const T & value)
-		: provider([value] { return value; })
-	{
-		printf("create const wire");
-	}
-
 	Wire(const std::function<T()> & provider)
 		: provider(provider)
 	{
-		printf("create function wire");
+	}
+
+	Wire(const T & value)
+		: provider([value]() -> T { return value; })
+	{
 	}
 
 	Wire(const Wire<T> & w)
 		: provider(w.provider)
 	{
-		printf("create copied wire");
 	}
 
 	Wire(Wire<T> && w)
 		: provider(w.provider)
 	{
-		printf("create moved wire");
 	}
 
 	template<typename V>
 	Wire(const Wire<V> & w)
 		: provider([w] { return (T)w.getValue(); } )
 	{
-		printf("create converted wire");
 	}
 
 	inline T getValue() const

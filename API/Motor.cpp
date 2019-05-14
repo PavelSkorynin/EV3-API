@@ -8,24 +8,34 @@
 #include "Motor.h"
 
 #include "core/ev3_output.h"
+#include "core/ev3_lcd.h"
 
 namespace ev3 {
 
+template<typename T>
+inline uint8_t P(const T &value) {
+	return static_cast<uint8_t>(value);
+}
+
 Motor::Motor(Port port)
 	: port(port)
-	, direction(FORWARD)
+	, direction(Direction::FORWARD)
 	, zeroEncoder(0)
-	, speedInput([this]() { return actualSpeed; })
-	, encoderInput([this]() { return direction == FORWARD ? encoder - zeroEncoder : zeroEncoder - encoder; })
+	, speedInput([this]() -> int { return this->actualSpeed; })
+	, encoderInput([this]() -> int {
+		return this->direction == Direction::FORWARD
+			? (this->encoder - this->zeroEncoder)
+					: (this->zeroEncoder - this->encoder);
+		})
 {
-	OnEx(port, RESET_NONE);
-	Fwd(port);
+	OnEx(P(port), RESET_NONE);
+	Fwd(P(port));
 	updateInputs();
 	resetEncoder();
 }
 
 Motor::~Motor() {
-	OffEx(port, RESET_NONE);
+	OffEx(P(port), RESET_NONE);
 }
 
 void Motor::setDirection(const Direction & direction) {
@@ -34,7 +44,7 @@ void Motor::setDirection(const Direction & direction) {
 	}
 
 	this->direction = direction;
-	SetDirection(port, direction);
+	SetDirection(P(port), P(direction));
 }
 
 WireI Motor::getActualSpeed() const {
@@ -46,11 +56,13 @@ WireI Motor::getEncoder() const {
 }
 
 void Motor::setPower(const WireI & output) {
+	speedOutput.reset();
 	powerOutput = std::make_shared<WireI>(output);
 	updateOutputs();
 }
 
 void Motor::setSpeed(const WireI & output) {
+	powerOutput.reset();
 	speedOutput = std::make_shared<WireI>(output);
 	updateOutputs();
 }
@@ -60,24 +72,21 @@ void Motor::resetEncoder() {
 }
 
 void Motor::updateInputs() {
-	int8_t speed;
 	int tacho;
-	int sensor;
-	OutputRead(port, &speed, &tacho, &sensor);
+
 	// tacho or sensor ??
-	encoder = tacho;
-	actualSpeed = speed;
+	OutputRead(P(port), &actualSpeed, &tacho, &encoder);
 }
 
 void Motor::updateOutputs() {
 	if (powerOutput) {
-		if (!OutputPower(port, powerOutput->getValue())) {
-			printf("Failed to set power for motor on port %d\n", port);
+		if (!OutputPower(P(port), powerOutput->getValue())) {
+			LcdTextf(1, 0, 60, "Output error %d", P(port));
 		}
 	}
 	else if (speedOutput) {
-		if (!OutputSpeed(port, speedOutput->getValue())) {
-			printf("Failed to set speed for motor on port %d\n", port);
+		if (!OutputSpeed(P(port), speedOutput->getValue())) {
+			LcdTextf(1, 0, 60, "Output error %d", P(port));
 		}
 	}
 }

@@ -13,12 +13,12 @@ namespace ev3 {
 const float UPDATE_STEP = 1.0f / 14375;
 
 PD::PD(float kp, float kd)
-	:kp(kp)
+	: kp(kp)
 	, kd(kd)
 	, lastError(0.0f)
 	, lastUpdateTime(0.0f)
 	, power(0.0f)
-	, powerWire([this] { return power; })
+	, powerWire([this] { return this->power; })
 {
 }
 

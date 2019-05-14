@@ -25,7 +25,7 @@ public:
 		P4 = IN_4
 	};
 
-	enum Mode {
+	enum class Mode {
 		NO_SENSOR = NO_SEN,		// No sensor connected / Unknown sensor
 		//Touchsenor
 		TOUCH = TOUCH_PRESS,	// Press

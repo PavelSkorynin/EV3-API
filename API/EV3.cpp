@@ -8,16 +8,19 @@
 #include "EV3.h"
 
 #include "core/ev3_core.h"
+#include <chrono>
 
 namespace ev3 {
 
 	std::shared_ptr<EV3> EV3::instance = std::shared_ptr<EV3>();
 
+	using namespace std::chrono;
+
 	float current_timestamp() {
-	    struct timeval te;
-	    gettimeofday(&te, NULL); // get current time
-	    long long usec = te.tv_sec*1000000LL + te.tv_usec; // calculate nanoseconds
-	    return usec / 10e9f;
+		milliseconds ms = duration_cast< milliseconds >(
+		    system_clock::now().time_since_epoch()
+		);
+	    return ms.count() / 1000.0f;
 	}
 
 	EV3::EV3()
@@ -55,9 +58,7 @@ namespace ev3 {
 		if (!sensorPtr) {
 			sensorPtr.reset(new Sensor(port));
 		}
-		if (sensorPtr->getMode() != mode) {
-			sensorPtr->setMode(mode);
-		}
+		sensorPtr->setMode(mode);
 		return sensorPtr;
 	}
 
