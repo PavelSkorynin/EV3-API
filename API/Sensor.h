@@ -68,8 +68,8 @@ public:
 
 	void setMode(const Mode & mode);
 
-	void updateInputs() override;
-	void updateOutputs() override;
+	void updateInputs(float timestampSeconds) override;
+	void updateOutputs(float timestampSeconds) override;
 
 protected:
 	Sensor(Port port);

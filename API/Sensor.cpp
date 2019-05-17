@@ -40,15 +40,13 @@ void Sensor::setMode(const Mode & mode) {
 //		printf("Failed to set mode %d for sensor at port %d", P(mode), P(port));
 		return;
 	}
-
-	updateInputs();
 }
 
-void Sensor::updateInputs() {
+void Sensor::updateInputs(float timestampSeconds) {
 	value = ReadSensor(P(port));
 }
 
-void Sensor::updateOutputs() {
+void Sensor::updateOutputs(float timestampSeconds) {
 
 }
 

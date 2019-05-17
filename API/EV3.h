@@ -48,8 +48,8 @@ namespace ev3 {
 			return LcdPrintf((char)color, fmt, args...);
 		}
 
-		static void updateInputs();
-		static void updateOutputs();
+		static void updateInputs(float timestampSeconds);
+		static void updateOutputs(float timestampSeconds);
 	private:
 		EV3();
 

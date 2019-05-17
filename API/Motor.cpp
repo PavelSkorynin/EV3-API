@@ -10,6 +10,8 @@
 #include "core/ev3_output.h"
 #include "core/ev3_lcd.h"
 
+#include <math.h>
+
 namespace ev3 {
 
 template<typename T>
@@ -20,17 +22,22 @@ inline uint8_t P(const T &value) {
 Motor::Motor(Port port)
 	: port(port)
 	, direction(Direction::FORWARD)
+	, maxAcceleration(2500.0f)
+	, maxSpeed(70.0f) // ~20% of battery
+	, lastSpeed(0)
+	, lastTimestamp(0)
 	, zeroEncoder(0)
-	, speedInput([this]() -> int { return this->actualSpeed; })
+	, speedInput([this]() -> int { return this->direction == Direction::FORWARD ? this->actualSpeed : -this->actualSpeed; })
 	, encoderInput([this]() -> int {
 		return this->direction == Direction::FORWARD
 			? (this->encoder - this->zeroEncoder)
 					: (this->zeroEncoder - this->encoder);
 		})
+	, tachoInput([this]() -> int { return this->tacho; })
 {
 	OnEx(P(port), RESET_NONE);
 	Fwd(P(port));
-	updateInputs();
+	updateInputs(0);
 	resetEncoder();
 }
 
@@ -55,41 +62,58 @@ WireI Motor::getEncoder() const {
 	return encoderInput;
 }
 
-void Motor::setPower(const WireI & output) {
-	speedOutput.reset();
-	powerOutput = std::make_shared<WireI>(output);
-	updateOutputs();
+WireI Motor::getTacho() const {
+	return encoderInput;
 }
 
-void Motor::setSpeed(const WireI & output) {
-	powerOutput.reset();
-	speedOutput = std::make_shared<WireI>(output);
-	updateOutputs();
+void Motor::setPower(const WireI & output) {
+	powerOutput = std::make_shared<WireI>(output);
 }
 
 void Motor::resetEncoder() {
 	zeroEncoder = encoder;
 }
 
-void Motor::updateInputs() {
-	int tacho;
+void Motor::setMaxAccelleration(float maxAcceleration) {
+	this->maxAcceleration = maxAcceleration;
+}
 
+void Motor::updateInputs(float timestampSeconds) {
 	// tacho or sensor ??
 	OutputRead(P(port), &actualSpeed, &tacho, &encoder);
+	if (abs(actualSpeed) > maxSpeed) {
+		maxSpeed = abs(actualSpeed);
+	}
+	if (actualSpeed != lastSpeed) {
+		lastSpeed = actualSpeed;
+		lastTimestamp = timestampSeconds;
+	}
 }
 
-void Motor::updateOutputs() {
+void Motor::updateOutputs(float timestampSeconds) {
 	if (powerOutput) {
-		if (!OutputPower(P(port), powerOutput->getValue())) {
-			LcdTextf(1, 0, 60, "Output error %d", P(port));
+		int targetPower = powerOutput->getValue();
+
+		int currentSpeed = direction == Direction::FORWARD ? actualSpeed : -actualSpeed;;
+
+		float dSpeed = targetPower * maxSpeed / 100.0f - currentSpeed;
+		float delta = timestampSeconds - lastTimestamp;
+		// too small step
+		if (delta < 10e-9) {
+			return;
 		}
-	}
-	else if (speedOutput) {
-		if (!OutputSpeed(P(port), speedOutput->getValue())) {
-			LcdTextf(1, 0, 60, "Output error %d", P(port));
+		float acceleration = maxAcceleration * powf(1.07f, fabsf(currentSpeed));
+		if (fabsf(dSpeed) / delta > acceleration) {
+			int sign = dSpeed >= 0 ? 1 : -1;
+			targetPower = (int)(currentSpeed * 100.0f / maxSpeed + sign * delta * acceleration);
+		}
+		if (port == Port::B && delta > 0) {
+			LcdTextf(0, 0, 50, "%0.6f: %6.2f", delta, dSpeed / delta);
+		}
+		if (!OutputPower(P(port), targetPower)) {
+			LcdTextf(0, 0, 60, "Output error %d", P(port));
 		}
 	}
 }
-
 
 } /* namespace ev3 */

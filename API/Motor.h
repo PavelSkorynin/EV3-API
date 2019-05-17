@@ -43,27 +43,39 @@ public:
 
 	WireI getActualSpeed() const;
 	WireI getEncoder() const;
+	WireI getTacho() const;
 
 	void setPower(const WireI & output);
-	void setSpeed(const WireI & output);
 
 	void resetEncoder();
+	/**
+	 * Maximum acceleration for this motor. Default value 2500.
+	 * Valid values lies in interval ~[1000, 10000]
+	 */
+	void setMaxAccelleration(float maxAcceleration);
 
-	void updateInputs() override;
-	void updateOutputs() override;
+	void updateInputs(float timestampSeconds) override;
+	void updateOutputs(float timestampSeconds) override;
 
 protected:
 	Port port;
 	Direction direction;
+	float maxAcceleration;
+	// max detected speed; used to calibrate power
+	float maxSpeed;
+	// actual speed measured at lastTimestamp
+	float lastSpeed;
+	float lastTimestamp;
 
 	int8_t actualSpeed;
 	int zeroEncoder;
 	int encoder;
+	int tacho;
 
 	WireI speedInput;
 	WireI encoderInput;
+	WireI tachoInput;
 	std::shared_ptr<WireI> powerOutput;
-	std::shared_ptr<WireI> speedOutput;
 
 	Motor(Port port);
 

@@ -50,7 +50,13 @@ namespace ev3 {
 	}
 
 	void EV3::wait(float seconds) {
-		Wait((int)(seconds * 1000));
+		float timestamp = ev3::EV3::timestamp();
+		float startTimestamp = timestamp;
+		while (timestamp - startTimestamp < 3) {
+			timestamp = ev3::EV3::timestamp();
+			ev3::EV3::updateInputs(timestamp);
+			ev3::EV3::updateOutputs(timestamp);
+		}
 	}
 
 	std::shared_ptr<Sensor> EV3::getSensor(Sensor::Port port, Sensor::Mode mode) {
@@ -70,21 +76,21 @@ namespace ev3 {
 		return motorPtr;
 	}
 
-	void EV3::updateInputs() {
+	void EV3::updateInputs(float timestampSeconds) {
 		for (auto& pair : instance->sensors) {
-			pair.second->updateInputs();
+			pair.second->updateInputs(timestampSeconds);
 		}
 		for (auto& pair : instance->motors) {
-			pair.second->updateInputs();
+			pair.second->updateInputs(timestampSeconds);
 		}
 	}
 
-	void EV3::updateOutputs() {
+	void EV3::updateOutputs(float timestampSeconds) {
 		for (auto& pair : instance->sensors) {
-			pair.second->updateOutputs();
+			pair.second->updateOutputs(timestampSeconds);
 		}
 		for (auto& pair : instance->motors) {
-			pair.second->updateOutputs();
+			pair.second->updateOutputs(timestampSeconds);
 		}
 	}
 

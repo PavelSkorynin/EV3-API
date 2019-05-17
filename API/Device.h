@@ -14,8 +14,8 @@ namespace ev3 {
 	public:
 		virtual ~Device() {}
 
-		virtual void updateInputs() = 0;
-		virtual void updateOutputs() = 0;
+		virtual void updateInputs(float timestampSeconds) = 0;
+		virtual void updateOutputs(float timestampSeconds) = 0;
 	};
 }
 
