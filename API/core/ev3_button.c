@@ -422,3 +422,7 @@ uint8_t ButtonState(uint8_t btn)
 		return BTNSTATE_NONE;
 }
 
+uint16_t CheckButtonsNoWait()
+{
+	return checkButtons();
+}

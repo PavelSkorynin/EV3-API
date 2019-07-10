@@ -12,6 +12,8 @@
 
 namespace ev3 {
 
+	const float debounceTime = 0.01f;
+
 	std::shared_ptr<EV3> EV3::instance = std::shared_ptr<EV3>();
 
 	using namespace std::chrono;
@@ -25,6 +27,8 @@ namespace ev3 {
 
 	EV3::EV3()
 		: zeroTimestamp(current_timestamp())
+		, buttonStateChangingTimestamp {0, 0, 0, 0, 0, 0}
+		, buttonIsDown {false, false, false, false, false, false}
 	{
 		InitEV3();
 	}
@@ -59,6 +63,10 @@ namespace ev3 {
 		}
 	}
 
+	bool EV3::isButtonDown(const ButtonID & buttonId) {
+		return instance->buttonIsDown[(int)buttonId];
+	}
+
 	std::shared_ptr<Sensor> EV3::getSensor(Sensor::Port port, Sensor::Mode mode) {
 		auto& sensorPtr = instance->sensors[port];
 		if (!sensorPtr) {
@@ -82,6 +90,23 @@ namespace ev3 {
 		}
 		for (auto& pair : instance->motors) {
 			pair.second->updateInputs(timestampSeconds);
+		}
+
+		auto buttonsState = CheckButtonsNoWait();
+		for (int buttonId = 0; buttonId < buttonsCount; ++buttonId) {
+			if (instance->buttonIsDown[buttonId] == ((buttonsState & (1 << buttonId)) != 0)) {
+				instance->buttonStateChangingTimestamp[buttonId] = timestampSeconds;
+			}
+
+			if (timestampSeconds - instance->buttonStateChangingTimestamp[buttonId] > debounceTime) {
+				instance->buttonStateChangingTimestamp[buttonId] = timestampSeconds;
+				instance->buttonIsDown[buttonId] = !instance->buttonIsDown[buttonId];
+			}
+		}
+
+		if (instance->buttonIsDown[(int)ButtonID::ESCAPE]) {
+			deinit();
+			exit(0);
 		}
 	}
 

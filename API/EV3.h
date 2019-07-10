@@ -24,6 +24,15 @@ namespace ev3 {
 			WHITE = 0,
 		};
 
+		enum class ButtonID : char {
+			UP = 0,
+			ENTER = 1,
+			DOWN = 2,
+			RIGHT = 3,
+			LEFT = 4,
+			ESCAPE = 5,
+		};
+
 
 		~EV3();
 
@@ -48,6 +57,8 @@ namespace ev3 {
 			return LcdPrintf((char)color, fmt, args...);
 		}
 
+		static bool isButtonDown(const ButtonID & buttonId);
+
 		static void updateInputs(float timestampSeconds);
 		static void updateOutputs(float timestampSeconds);
 	private:
@@ -59,6 +70,10 @@ namespace ev3 {
 		std::map<Motor::Port, std::shared_ptr<Motor>> motors;
 
 		float zeroTimestamp;
+
+		static const int buttonsCount = 6;
+		float buttonStateChangingTimestamp[buttonsCount];
+		bool buttonIsDown[buttonsCount];
 	};
 }
 

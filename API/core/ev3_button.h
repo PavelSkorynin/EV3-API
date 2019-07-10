@@ -96,6 +96,8 @@ char ReadButtonEx(uint8_t btn, bool reset, bool* pressed, uint16_t* count);
 
 uint8_t ButtonState(uint8_t btn);
 
+uint16_t CheckButtonsNoWait();
+
 #endif // ev3_button_h
 
 #ifdef __cplusplus
