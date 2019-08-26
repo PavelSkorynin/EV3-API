@@ -33,39 +33,41 @@ namespace ev3 {
 			ESCAPE = 5,
 		};
 
-
+		EV3();
 		~EV3();
 
-		static std::shared_ptr<Sensor> getSensor(Sensor::Port port, Sensor::Mode);
-		static std::shared_ptr<Motor> getMotor(Motor::Port port);
-
-		static void init();
-		static void deinit();
+		/**
+		 * Метод для получения доступа к датчику. Новый экземпляр каждый раз не
+		 * создаётся. Вместо этого все запрошенные когда-либо датчики хранятся
+		 * в классе EV3.
+		 * @param port номер порта на блоке EV3
+		 * @param mode типа датчика
+		 * @return Умный указатель на датчик
+		 */
+		std::shared_ptr<Sensor> getSensor(Sensor::Port port, Sensor::Mode mode);
+		std::shared_ptr<Motor> getMotor(Motor::Port port);
 
 		/**
 		 * Timestamp from init() in seconds
 		 */
-		static float timestamp();
-		static void wait(float seconds);
+		float timestamp();
+		void wait(float seconds);
 
 		template<typename... Args>
-		static bool lcdTextf(Color color, short x, short y, const char *fmt, Args... args) {
+		bool lcdTextf(Color color, short x, short y, const char *fmt, Args... args) {
 			return LcdTextf((char)color, x, y, fmt, args...);
 		}
 		template<typename... Args>
-		static int lcdPrintf(Color color, const char * fmt, Args... args) {
+		int lcdPrintf(Color color, const char * fmt, Args... args) {
 			return LcdPrintf((char)color, fmt, args...);
 		}
+		void runLoop(std::function<bool(float)> update);
 
-		static bool isButtonDown(const ButtonID & buttonId);
+		bool isButtonDown(const ButtonID & buttonId);
 
-		static void updateInputs(float timestampSeconds);
-		static void updateOutputs(float timestampSeconds);
+		void updateInputs(float timestampSeconds);
+		void updateOutputs(float timestampSeconds);
 	private:
-		EV3();
-
-		static std::shared_ptr<EV3> instance;
-
 		std::map<Sensor::Port, std::shared_ptr<Sensor>> sensors;
 		std::map<Motor::Port, std::shared_ptr<Motor>> motors;
 

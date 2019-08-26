@@ -46,6 +46,7 @@ public:
 	WireI getTacho() const;
 
 	void setPower(const WireI & output);
+	void setSpeed(const WireI & output);
 
 	void resetEncoder();
 	/**
@@ -76,6 +77,7 @@ protected:
 	WireI encoderInput;
 	WireI tachoInput;
 	std::shared_ptr<WireI> powerOutput;
+	std::shared_ptr<WireI> speedOutput;
 
 	Motor(Port port);
 

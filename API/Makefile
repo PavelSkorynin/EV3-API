@@ -1,5 +1,5 @@
 ifdef OS
-   RM = del /Q
+   RM = rmdir /S /Q
 	 COPY = copy
    FixPath = $(subst /,\,$1)
 	 MKDIR = @mkdir
@@ -52,4 +52,5 @@ example:
 
 .PHONY: clean
 clean:
-	$(RM) out example
+	$(RM) out || @echo
+	$(RM) example || @echo

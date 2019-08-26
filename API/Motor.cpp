@@ -68,6 +68,12 @@ WireI Motor::getTacho() const {
 
 void Motor::setPower(const WireI & output) {
 	powerOutput = std::make_shared<WireI>(output);
+	speedOutput.reset();
+}
+
+void Motor::setSpeed(const WireI & output) {
+	speedOutput = std::make_shared<WireI>(output);
+	powerOutput.reset();
 }
 
 void Motor::resetEncoder() {
@@ -91,27 +97,31 @@ void Motor::updateInputs(float timestampSeconds) {
 }
 
 void Motor::updateOutputs(float timestampSeconds) {
+	if (!powerOutput && !speedOutput) {
+		return;
+	}
+	int targetPower = powerOutput ? powerOutput->getValue() : speedOutput->getValue();
+
+	int currentSpeed = direction == Direction::FORWARD ? actualSpeed : -actualSpeed;;
+
+	float dSpeed = targetPower * maxSpeed / 100.0f - currentSpeed;
+	float delta = timestampSeconds - lastTimestamp;
+	// too small step
+	if (delta < 10e-9) {
+		return;
+	}
+	float acceleration = maxAcceleration * powf(1.07f, fabsf(currentSpeed));
+	if (fabsf(dSpeed) / delta > acceleration) {
+		int sign = dSpeed >= 0 ? 1 : -1;
+		targetPower = (int)(currentSpeed * 100.0f / maxSpeed + sign * delta * acceleration);
+	}
 	if (powerOutput) {
-		int targetPower = powerOutput->getValue();
-
-		int currentSpeed = direction == Direction::FORWARD ? actualSpeed : -actualSpeed;;
-
-		float dSpeed = targetPower * maxSpeed / 100.0f - currentSpeed;
-		float delta = timestampSeconds - lastTimestamp;
-		// too small step
-		if (delta < 10e-9) {
-			return;
-		}
-		float acceleration = maxAcceleration * powf(1.07f, fabsf(currentSpeed));
-		if (fabsf(dSpeed) / delta > acceleration) {
-			int sign = dSpeed >= 0 ? 1 : -1;
-			targetPower = (int)(currentSpeed * 100.0f / maxSpeed + sign * delta * acceleration);
-		}
-		if (port == Port::B && delta > 0) {
-			LcdTextf(0, 0, 50, "%0.6f: %6.2f", delta, dSpeed / delta);
-		}
 		if (!OutputPower(P(port), targetPower)) {
-			LcdTextf(0, 0, 60, "Output error %d", P(port));
+			LcdTextf(0, 0, 60, "Output power error %d", P(port));
+		}
+	} else {
+		if (!OutputSpeed(P(port), targetPower)) {
+			LcdTextf(0, 0, 60, "Output speed error %d", P(port));
 		}
 	}
 }
