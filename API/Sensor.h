@@ -34,6 +34,7 @@ public:
 		COLOR_REFLECT = COL_REFLECT,	// Reflect
 		COLOR_AMBIENT = COL_AMBIENT,	// Ambient
 		COLOR_COLOR = COL_COLOR,		// Color
+		COLOR_RGB = COL_COLOR_RGB,		// RGB Color
 
 		//Ultrasonic
 		ULTRASONIC_DISTANCE_CM = US_DIST_CM,	// Dist in cm
