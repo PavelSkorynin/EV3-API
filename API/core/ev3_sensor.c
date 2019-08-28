@@ -300,7 +300,7 @@ void* ReadSensorData(int sensorPort)
 */
 int ReadSensor(int sensorPort)
 {
-	uint64_t* data = ReadSensorData(sensorPort);
+	uint64_t* data = (uint64_t*)ReadSensorData(sensorPort);
 	int32_t help=0;
 	if (!data)
 		return -1;
@@ -400,59 +400,9 @@ int ReadSensor(int sensorPort)
 */
 int SetSensorMode(int sensorPort, int name)
 {
-	static DEVCON devCon;
-
-	if (!g_analogSensors)
-		InitSensors();
-
-	if (sensorPort < 0 || sensorPort >= INPUTS)
-		return -1;
-
-	sensor_setup_NAME[sensorPort] = name;
-	// Setup of Input
-	switch (name)
-	{
-		case NO_SEN:
-			break;
-		case TOUCH_PRESS:
-			devCon.Connection[sensorPort] 	= CONN_INPUT_DUMB;
-			devCon.Type[sensorPort] 		= TOUCH_TYPE;
-			devCon.Mode[sensorPort] 		= TOUCH_PRESS_MODE;
-			break;
-		case COL_REFLECT:
-			devCon.Connection[sensorPort] 	= CONN_INPUT_UART;
-			devCon.Type[sensorPort] 		= COL_TYPE;
-			devCon.Mode[sensorPort] 		= COL_REFLECT_MODE;
-			break;
-		case COL_AMBIENT:
-			devCon.Connection[sensorPort] 	= CONN_INPUT_UART;
-			devCon.Type[sensorPort] 		= COL_TYPE;
-			devCon.Mode[sensorPort] 		= COL_AMBIENT_MODE;
-			break;
-		case COL_COLOR:
-			devCon.Connection[sensorPort] 	= CONN_INPUT_UART;
-			devCon.Type[sensorPort] 		= COL_TYPE;
-			devCon.Mode[sensorPort] 		= COL_COLOR_MODE;
-			break;
-		case COL_COLOR_RGB:
-			devCon.Connection[sensorPort] 	= CONN_INPUT_UART;
-			devCon.Type[sensorPort] 		= COL_TYPE;
-			devCon.Mode[sensorPort] 		= COL_COLOR_RGB_MODE;
-			break;
-		case US_DIST_CM:
-			devCon.Connection[sensorPort] 	= CONN_INPUT_UART;
-			devCon.Type[sensorPort] 		= US_TYPE;
-			devCon.Mode[sensorPort] 		= US_DIST_CM_MODE;
-			break;
-		case US_DIST_MM:
-			devCon.Connection[sensorPort] 	= CONN_INPUT_UART;
-			devCon.Type[sensorPort] 		= US_TYPE;
-			devCon.Mode[sensorPort] 		= US_DIST_MM_MODE;
-			break;
-		default: return -1;
-	}
-
-	return 0;
+	(void)sensorPort;
+	(void)name;
+	return -1;
 }
 
 /********************************************************************************************/
@@ -467,7 +417,7 @@ int SetAllSensorMode(int name_1, int name_2, int name_3, int name_4)
 	static DEVCON devCon;
 	int sensorPort = 0;
 
-	int name[4] = {};
+	int name[4] = {0};
 
 	name[0] = name_1;
 	name[1] = name_2;

@@ -15,6 +15,8 @@ inline uint8_t P(const T &value) {
 	return static_cast<uint8_t>(value);
 }
 
+Sensor::Mode Sensor::selectedModes[4] = { Mode::NO_SENSOR, Mode::NO_SENSOR, Mode::NO_SENSOR, Mode::NO_SENSOR };
+
 Sensor::Sensor(Port port)
 	: port(port)
 	, mode(Mode::NO_SENSOR)
@@ -35,7 +37,9 @@ void Sensor::setMode(const Mode & mode) {
 	}
 
 	this->mode = mode;
-	if (SetSensorMode(P(port), P(mode)) != 0)
+	selectedModes[(int)port] = mode;
+
+	if (SetAllSensorMode((int)selectedModes[0], (int)selectedModes[1], (int)selectedModes[2], (int)selectedModes[3]) != 0)
 	{
 //		printf("Failed to set mode %d for sensor at port %d", P(mode), P(port));
 		return;

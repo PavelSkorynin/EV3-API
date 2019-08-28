@@ -23,7 +23,8 @@ CPP_SRCS = $(wildcard *.cpp)
 CPP_INCLUDE = $(patsubst %,out/include/%,$(wildcard *.h))
 CPP_OBJS = $(patsubst %,out/obj/%.o,$(CPP_SRCS))
 CFLAGS += -fno-strict-aliasing
-CXXFLAGS += -fno-strict-aliasing --std=c++11 -Wall
+CFLAGS += -Wall -Wextra -Wpointer-sign -Wno-unused-parameter
+CXXFLAGS += -fno-strict-aliasing --std=c++17 -Wall
 
 .DEFAULT: all
 all: out/lib/libev3apicore.a out/lib/libev3api.a
