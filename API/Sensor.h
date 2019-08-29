@@ -16,15 +16,24 @@
 
 namespace ev3 {
 
+/**
+ * Класс, отвечающий за взаимодействие с датчиком, подключенным к блоку EV3.
+ */
 class Sensor: public Device {
 public:
+	/**
+	 * Порт подключения датчика к блоку EV3
+	 */
 	enum class Port {
-		P1 = IN_1,
-		P2 = IN_2,
-		P3 = IN_3,
-		P4 = IN_4
+		P1 = IN_1,//!< P1
+		P2 = IN_2,//!< P2
+		P3 = IN_3,//!< P3
+		P4 = IN_4 //!< P4
 	};
 
+	/**
+	 * Тип датчика и режим его работы
+	 */
 	enum class Mode {
 		NO_SENSOR = NO_SEN,		// No sensor connected / Unknown sensor
 		//Touchsenor
@@ -58,18 +67,42 @@ public:
 
 	~Sensor();
 
+	/**
+	 * Порт, к которому подключен датчик
+	 * @return порт
+	 */
 	inline Port getPort() const {
 		return port;
 	}
+	/**
+	 * Тип датчика и режим его работы
+	 * @return
+	 */
 	inline Mode getMode() const {
 		return mode;
 	}
 
+	/**
+	 * Текущее значение на датчике
+	 * @return поток данных
+	 */
 	WireI getValue() const;
 
+	/**
+	 * Утановка режима работы датчика
+	 * @param mode режим работы датчика
+	 */
 	void setMode(const Mode & mode);
 
+	/**
+	 * Обновление данных, получаемых с датчика
+	 * @param timestampSeconds текущее время в секундах
+	 */
 	void updateInputs(float timestampSeconds) override;
+	/**
+	 * Наследуемый метод. Ничего не делает
+	 * @param timestampSeconds текущее время в секундах
+	 */
 	void updateOutputs(float timestampSeconds) override;
 
 protected:

@@ -9,10 +9,17 @@
 #define PROCESS_H_
 
 namespace ev3 {
+/**
+ * Класс для организации процесса обработки данных
+ */
 	class Process {
 	public:
 		virtual ~Process() {}
 
+		/**
+		 * Обновление
+		 * @param secondsFromStart текущее время в секундах
+		 */
 		virtual void update(float secondsFromStart) = 0;
 	};
 }
