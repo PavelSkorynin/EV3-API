@@ -41,7 +41,6 @@ void Sensor::setMode(const Mode & mode) {
 
 	if (SetAllSensorMode((int)selectedModes[0], (int)selectedModes[1], (int)selectedModes[2], (int)selectedModes[3]) != 0)
 	{
-//		printf("Failed to set mode %d for sensor at port %d", P(mode), P(port));
 		return;
 	}
 }

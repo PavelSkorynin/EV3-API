@@ -9,6 +9,7 @@
 
 #include "core/ev3_core.h"
 #include <chrono>
+#include <thread>
 
 namespace ev3 {
 
@@ -44,20 +45,20 @@ namespace ev3 {
 		float startTimestamp = timestamp;
 		while (timestamp - startTimestamp < seconds) {
 			timestamp = ev3::EV3::timestamp();
-			ev3::EV3::updateInputs(timestamp);
-			ev3::EV3::updateOutputs(timestamp);
+			updateInputs(timestamp);
+			updateOutputs(timestamp);
 		}
 	}
 
 	void EV3::runLoop(std::function<bool(float)> update) {
 		float timestamp;
 		while (true) {
-			timestamp = ev3::EV3::timestamp();
-			ev3::EV3::updateInputs(timestamp);
+			timestamp = this->timestamp();
+			updateInputs(timestamp);
 			if (!update(timestamp)) {
 				break;
 			}
-			ev3::EV3::updateOutputs(timestamp);
+			updateOutputs(timestamp);
 		}
 	}
 
@@ -84,10 +85,14 @@ namespace ev3 {
 
 	void EV3::updateInputs(float timestampSeconds) {
 		for (auto& pair : sensors) {
-			pair.second->updateInputs(timestampSeconds);
+			if (pair.second) {
+				pair.second->updateInputs(timestampSeconds);
+			}
 		}
 		for (auto& pair : motors) {
-			pair.second->updateInputs(timestampSeconds);
+			if (pair.second) {
+				pair.second->updateInputs(timestampSeconds);
+			}
 		}
 
 		auto buttonsState = CheckButtonsNoWait();
@@ -104,17 +109,21 @@ namespace ev3 {
 
 		if (buttonIsDown[(int)ButtonID::ESCAPE]) {
 			FreeEV3();
-			sleep(1);
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 			exit(0);
 		}
 	}
 
 	void EV3::updateOutputs(float timestampSeconds) {
 		for (auto& pair : sensors) {
-			pair.second->updateOutputs(timestampSeconds);
+			if (pair.second) {
+				pair.second->updateOutputs(timestampSeconds);
+			}
 		}
 		for (auto& pair : motors) {
-			pair.second->updateOutputs(timestampSeconds);
+			if (pair.second) {
+				pair.second->updateOutputs(timestampSeconds);
+			}
 		}
 	}
 

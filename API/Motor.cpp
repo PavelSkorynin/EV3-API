@@ -68,12 +68,6 @@ WireI Motor::getTacho() const {
 
 void Motor::setPower(const WireI & output) {
 	powerOutput = std::make_shared<WireI>(output);
-	speedOutput.reset();
-}
-
-void Motor::setSpeed(const WireI & output) {
-	speedOutput = std::make_shared<WireI>(output);
-	powerOutput.reset();
 }
 
 void Motor::resetEncoder() {
@@ -97,11 +91,10 @@ void Motor::updateInputs(float timestampSeconds) {
 }
 
 void Motor::updateOutputs(float timestampSeconds) {
-	if (!powerOutput && !speedOutput) {
+	if (!powerOutput) {
 		return;
 	}
-	int targetPower = powerOutput ? powerOutput->getValue() : speedOutput->getValue();
-
+	int targetPower = powerOutput->getValue();
 	int currentSpeed = direction == Direction::FORWARD ? actualSpeed : -actualSpeed;;
 
 	float dSpeed = targetPower * maxSpeed / 100.0f - currentSpeed;
@@ -115,14 +108,8 @@ void Motor::updateOutputs(float timestampSeconds) {
 		int sign = dSpeed >= 0 ? 1 : -1;
 		targetPower = (int)(currentSpeed * 100.0f / maxSpeed + sign * delta * acceleration);
 	}
-	if (powerOutput) {
-		if (!OutputPower(P(port), targetPower)) {
-			LcdTextf(0, 0, 60, "Output power error %d", P(port));
-		}
-	} else {
-		if (!OutputSpeed(P(port), targetPower)) {
-			LcdTextf(0, 0, 60, "Output speed error %d", P(port));
-		}
+	if (!OutputPower(P(port), targetPower)) {
+		LcdTextf(0, 0, 60, "Output power error %d", P(port));
 	}
 }
 

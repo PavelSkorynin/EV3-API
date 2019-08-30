@@ -88,12 +88,6 @@ public:
 	 * @param output поток данных
 	 */
 	void setPower(const WireI & output);
-	/**
-	 * Установка скорости мотора. Нельзя задавать одновременнно с setPower.
-	 * Будет работать только последний вызов.
-	 * @param output поток данных
-	 */
-	void setSpeed(const WireI & output);
 
 	/**
 	 * Сбрасывает значение энкодера

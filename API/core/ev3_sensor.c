@@ -417,12 +417,7 @@ int SetAllSensorMode(int name_1, int name_2, int name_3, int name_4)
 	static DEVCON devCon;
 	int sensorPort = 0;
 
-	int name[4] = {0};
-
-	name[0] = name_1;
-	name[1] = name_2;
-	name[2] = name_3;
-	name[3] = name_4;
+	int name[4] = {name_1, name_2, name_3, name_4};
 
 	if (!g_analogSensors)
 		InitSensors();
@@ -525,7 +520,7 @@ int SetAllSensorMode(int name_1, int name_2, int name_3, int name_4)
 		}
 	}
 	// Set actual device mode
-	ioctl(g_uartFile, UART_SET_CONN, &devCon);
+//	ioctl(g_uartFile, UART_SET_CONN, &devCon);
 	//ioctl(g_iicFile, IIC_SET_CONN, &devCon);
 	return 0;
 }

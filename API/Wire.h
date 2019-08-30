@@ -75,14 +75,6 @@ public:
 		return provider();
 	}
 
-	/**
-	 * Оператор приведения к типу данных значения на проводе
-	 */
-	inline operator T() const
-	{
-		return provider();
-	}
-
 protected:
 	const std::function<T()> provider;
 };
