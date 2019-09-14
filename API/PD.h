@@ -39,6 +39,12 @@ public:
 	 */
 	void update(float secondsFromStart) override;
 
+	/**
+	 * Признак завершённости процесса
+	 * @return всегда возвращает false
+	 */
+	bool isComplete() const override;
+
 protected:
 	float kp;
 	float kd;

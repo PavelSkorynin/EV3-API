@@ -50,14 +50,17 @@ namespace ev3 {
 		}
 	}
 
-	void EV3::runLoop(std::function<bool(float)> update) {
+	void EV3::runLoop(const std::function<bool(float)> &update) {
+		auto process = std::make_shared<LambdaProcess>(update);
+		runProcess(std::dynamic_pointer_cast<Process>(process));
+	}
+
+	void EV3::runProcess(const std::shared_ptr<Process> &process) {
 		float timestamp;
-		while (true) {
+		while (!process->isComplete()) {
 			timestamp = this->timestamp();
 			updateInputs(timestamp);
-			if (!update(timestamp)) {
-				break;
-			}
+			process->update(timestamp);
 			updateOutputs(timestamp);
 		}
 	}

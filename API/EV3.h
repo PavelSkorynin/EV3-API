@@ -10,6 +10,7 @@
 
 #include "Sensor.h"
 #include "Motor.h"
+#include "Process.h"
 
 #include "core/ev3_lcd.h"
 
@@ -106,7 +107,15 @@ namespace ev3 {
 		 * @param update функция, вызываемая на каждой итерации цикла. На вход функции передаётся
 		 * текущее время в секундах
 		 */
-		void runLoop(std::function<bool(float)> update);
+		void runLoop(const std::function<bool(float)> &update);
+
+		/**
+		 * Запускает цикл на синхронное выполнение процесса в текущем потоке. Остановка происходит,
+		 * когда завершается процесс.
+		 * Внутри цикла происходит обновление входных и выходных данных.
+		 * @param process процесс на выполнение
+		 */
+		void runProcess(const std::shared_ptr<Process> &process);
 
 		/**
 		 * Проверка, нажата ли какая-либо кнопка на блоке

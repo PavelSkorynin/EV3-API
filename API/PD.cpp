@@ -48,4 +48,8 @@ void PD::update(float secondsFromStart) {
 	}
 }
 
+bool PD::isComplete() const {
+	return false;
+}
+
 } /* namespace ev3 */
