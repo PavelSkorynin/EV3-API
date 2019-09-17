@@ -56,13 +56,14 @@ namespace ev3 {
 	}
 
 	void EV3::runProcess(const std::shared_ptr<Process> &process) {
-		float timestamp;
+		float timestamp = this->timestamp();;
 		while (!process->isComplete()) {
 			timestamp = this->timestamp();
 			updateInputs(timestamp);
 			process->update(timestamp);
 			updateOutputs(timestamp);
 		}
+		process->onComplete(timestamp);
 	}
 
 	bool EV3::isButtonDown(const ButtonID & buttonId) {
