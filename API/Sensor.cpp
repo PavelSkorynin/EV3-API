@@ -27,7 +27,10 @@ Sensor::Sensor(Port port)
 Sensor::~Sensor() {
 }
 
-WireI Sensor::getValue() const {
+int Sensor::getValue() const {
+	return valueInput.getValue();
+}
+WireI Sensor::getValueWire() const {
 	return valueInput;
 }
 

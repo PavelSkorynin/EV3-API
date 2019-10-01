@@ -28,42 +28,42 @@ namespace ev3 {
 		 * Метод вызывается, когда процесс завершён
 		 * @param secondsFromStart
 		 */
-		virtual void onComplete(float secondsFromStart);
+		virtual void onCompleted(float secondsFromStart);
 
 		/**
 		 * Признак завершённости процесса
 		 * @return true, если процесс завершён и больше вызывать update не имеет смысла
 		 */
-		virtual bool isComplete() const = 0;
+		virtual bool isCompleted() const = 0;
 	};
 
 	class LambdaProcess : public Process {
 	public:
-		LambdaProcess(const std::function<bool(float)> &updateLambda);
-		LambdaProcess(const std::function<bool(float)> &updateLambda, const std::function<void(float)> &onCompleteLambda);
+		LambdaProcess(const std::function<bool(float)> &updateFunc);
+		LambdaProcess(const std::function<bool(float)> &updateFunc, const std::function<void(float)> &onCompletedFunc);
 
 		virtual void update(float secondsFromStart) override;
-		virtual void onComplete(float secondsFromStart) override;
-		virtual bool isComplete() const override;
+		virtual void onCompleted(float secondsFromStart) override;
+		virtual bool isCompleted() const override;
 
 	protected:
-		std::function<bool(float)> updateLambda;
-		std::function<void(float)> onCompleteLambda;
+		std::function<bool(float)> updateFunc;
+		std::function<void(float)> onCompletedFunc;
 		bool completed;
 	};
 
 	class TimeProcess : public Process {
 	public:
-		TimeProcess(const std::function<void(float)> &updateLambda, float duration, float delay = 0.0f);
-		TimeProcess(const std::function<void(float)> &updateLambda, const std::function<void(float)> &onCompleteLambda, float duration, float delay = 0.0f);
+		TimeProcess(const std::function<void(float)> &updateFunc, float duration, float delay = 0.0f);
+		TimeProcess(const std::function<void(float)> &updateFunc, const std::function<void(float)> &onCompletedFunc, float duration, float delay = 0.0f);
 
 		virtual void update(float secondsFromStart) override;
-		virtual void onComplete(float secondsFromStart) override;
-		virtual bool isComplete() const override;
+		virtual void onCompleted(float secondsFromStart) override;
+		virtual bool isCompleted() const override;
 
 	protected:
-		std::function<void(float)> updateLambda;
-		std::function<void(float)> onCompleteLambda;
+		std::function<void(float)> updateFunc;
+		std::function<void(float)> onCompletedFunc;
 		bool isInitialized;
 		bool completed;
 		float startTime;

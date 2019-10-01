@@ -54,16 +54,32 @@ void Motor::setDirection(const Direction & direction) {
 	SetDirection(P(port), P(direction));
 }
 
-WireI Motor::getActualSpeed() const {
+int Motor::getActualSpeed() const {
+	return speedInput.getValue();
+}
+
+WireI Motor::getActualSpeedWire() const {
 	return speedInput;
 }
 
-WireI Motor::getEncoder() const {
+int Motor::getEncoder() const {
+	return encoderInput.getValue();
+}
+
+WireI Motor::getEncoderWire() const {
 	return encoderInput;
 }
 
-WireI Motor::getTacho() const {
+int Motor::getTacho() const {
+	return encoderInput.getValue();
+}
+
+WireI Motor::getTachoWire() const {
 	return encoderInput;
+}
+
+void Motor::setPower(int power) {
+	powerOutput = std::make_shared<WireI>(power);
 }
 
 void Motor::setPower(const WireI & output) {

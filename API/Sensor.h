@@ -84,9 +84,14 @@ public:
 
 	/**
 	 * Текущее значение на датчике
+	 * @return целочисленное значение
+	 */
+	int getValue() const;
+	/**
+	 * Текущее значение на датчике
 	 * @return поток данных
 	 */
-	WireI getValue() const;
+	WireI getValueWire() const;
 
 	/**
 	 * Утановка режима работы датчика
@@ -119,6 +124,8 @@ protected:
 
 	friend class EV3;
 };
+
+typedef std::shared_ptr<Sensor> SensorPtr;
 
 } /* namespace ev3 */
 

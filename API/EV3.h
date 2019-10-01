@@ -19,30 +19,30 @@
 namespace ev3 {
 
 /**
+ * Цвета, используемые при выводе на экран
+ */
+enum class Color : char {
+	BLACK = 1,//!< BLACK
+	WHITE = 0,//!< WHITE
+};
+
+/**
+ * Идентификатор кнопки на блоке EV3
+ */
+enum class ButtonID : char {
+	UP = 0,    //!< UP
+	ENTER = 1, //!< ENTER
+	DOWN = 2,  //!< DOWN
+	RIGHT = 3, //!< RIGHT
+	LEFT = 4,  //!< LEFT
+	ESCAPE = 5,//!< ESCAPE
+};
+
+/**
  * Основной класс для взаимодействия с блоком EV3. Следует создавать только один экземпляр на программу.
  */
 	class EV3 {
 	public:
-		/**
-		 * Цвета, используемые при выводе на экран
-		 */
-		enum class Color : char {
-			BLACK = 1,//!< BLACK
-			WHITE = 0,//!< WHITE
-		};
-
-		/**
-		 * Идентификатор кнопки на блоке EV3
-		 */
-		enum class ButtonID : char {
-			UP = 0,    //!< UP
-			ENTER = 1, //!< ENTER
-			DOWN = 2,  //!< DOWN
-			RIGHT = 3, //!< RIGHT
-			LEFT = 4,  //!< LEFT
-			ESCAPE = 5,//!< ESCAPE
-		};
-
 		EV3();
 		~EV3();
 

@@ -7,21 +7,21 @@
 
 #include "Process.h"
 
-void ev3::Process::onComplete(float secondsFromStart) {
+void ev3::Process::onCompleted(float secondsFromStart) {
 
 }
 
-ev3::LambdaProcess::LambdaProcess(const std::function<bool(float)> &updateLambda)
-	: updateLambda(updateLambda)
-	, onCompleteLambda([](float){})
+ev3::LambdaProcess::LambdaProcess(const std::function<bool(float)> &updateFunc)
+	: updateFunc(updateFunc)
+	, onCompletedFunc([](float){})
 	, completed(false)
 {
 
 }
 
-ev3::LambdaProcess::LambdaProcess(const std::function<bool(float)> &updateLambda, const std::function<void(float)> &onCompleteLambda)
-	: updateLambda(updateLambda)
-	, onCompleteLambda(onCompleteLambda)
+ev3::LambdaProcess::LambdaProcess(const std::function<bool(float)> &updateFunc, const std::function<void(float)> &onCompletedFunc)
+	: updateFunc(updateFunc)
+	, onCompletedFunc(onCompletedFunc)
 	, completed(false)
 {
 
@@ -32,20 +32,20 @@ void ev3::LambdaProcess::update(float secondsFromStart) {
 		return;
 	}
 
-	completed = !updateLambda(secondsFromStart);
+	completed = !updateFunc(secondsFromStart);
 }
 
-void ev3::LambdaProcess::onComplete(float secondsFromStart) {
-	onCompleteLambda(secondsFromStart);
+void ev3::LambdaProcess::onCompleted(float secondsFromStart) {
+	onCompletedFunc(secondsFromStart);
 }
 
-bool ev3::LambdaProcess::isComplete() const {
+bool ev3::LambdaProcess::isCompleted() const {
 	return completed;
 }
 
-ev3::TimeProcess::TimeProcess(const std::function<void(float)> &updateLambda, float duration, float delay)
-	: updateLambda(updateLambda)
-	, onCompleteLambda([](float){})
+ev3::TimeProcess::TimeProcess(const std::function<void(float)> &updateFunc, float duration, float delay)
+	: updateFunc(updateFunc)
+	, onCompletedFunc([](float){})
 	, isInitialized(false)
 	, completed(false)
 	, startTime(0)
@@ -55,9 +55,9 @@ ev3::TimeProcess::TimeProcess(const std::function<void(float)> &updateLambda, fl
 
 }
 
-ev3::TimeProcess::TimeProcess(const std::function<void(float)> &updateLambda, const std::function<void(float)> &onCompleteLambda, float duration, float delay)
-	: updateLambda(updateLambda)
-	, onCompleteLambda(onCompleteLambda)
+ev3::TimeProcess::TimeProcess(const std::function<void(float)> &updateFunc, const std::function<void(float)> &onCompletedFunc, float duration, float delay)
+	: updateFunc(updateFunc)
+	, onCompletedFunc(onCompletedFunc)
 	, isInitialized(false)
 	, completed(false)
 	, startTime(0)
@@ -82,14 +82,14 @@ void ev3::TimeProcess::update(float secondsFromStart) {
 		return;
 	}
 
-	updateLambda(secondsFromStart);
+	updateFunc(secondsFromStart);
 }
 
-void ev3::TimeProcess::onComplete(float secondsFromStart) {
-	onCompleteLambda(secondsFromStart);
+void ev3::TimeProcess::onCompleted(float secondsFromStart) {
+	onCompletedFunc(secondsFromStart);
 }
 
-bool ev3::TimeProcess::isComplete() const {
+bool ev3::TimeProcess::isCompleted() const {
 	return completed;
 }
 

@@ -5,35 +5,42 @@
  *      Author: Pavel Skorynin
  */
 
-#include "PD.h"
+#include "PID.h"
 
 namespace ev3 {
 
 // don't update too often; 14375Hz = frequency of UART on PORT 1/2
 const float UPDATE_STEP = 1.0f / 14375;
 
-PD::PD(float kp, float kd)
+PID::PID(float kp, float ki, float kd, std::function<bool()> isCompleted)
 	: kp(kp)
+	, ki(ki)
 	, kd(kd)
 	, lastError(0.0f)
+	, lastIntegralPart(0.0f)
 	, lastUpdateTime(0.0f)
 	, power(0.0f)
+	, isCompletedFunc(isCompleted)
 	, powerWire([this] { return this->power; })
 {
 }
 
-PD::~PD() {
+PID::~PID() {
 }
 
-void PD::setError(const WireF & errorWire) {
+void PID::setError(const WireF & errorWire) {
 	this->errorWire = std::make_shared<WireF>(errorWire);
 }
 
-WireF PD::getPower() {
+float PID::getPower() const {
+	return powerWire.getValue();
+}
+
+WireF PID::getPowerWire() const {
 	return powerWire;
 }
 
-void PD::update(float secondsFromStart) {
+void PID::update(float secondsFromStart) {
 	if (!errorWire) {
 		return;
 	}
@@ -41,15 +48,16 @@ void PD::update(float secondsFromStart) {
 
 	float dErr = (error - lastError);
 
-	power = error * kp + dErr * kd;
+	power = error * kp + lastIntegralPart + error * ki + dErr * kd;
 	if (secondsFromStart - lastUpdateTime >= UPDATE_STEP) {
 		lastUpdateTime = secondsFromStart;
 		lastError = error;
+		lastIntegralPart += error * ki;
 	}
 }
 
-bool PD::isComplete() const {
-	return false;
+bool PID::isCompleted() const {
+	return isCompletedFunc();
 }
 
 } /* namespace ev3 */
