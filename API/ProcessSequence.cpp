@@ -18,8 +18,8 @@ void ProcessSequence::update(float secondsFromStart) {
  	while (!sequence.empty()) {
  		auto& front = sequence.front();
  		front->update(secondsFromStart);
- 		if (front->isComplete()) {
- 			front->onComplete(secondsFromStart);
+ 		if (front->isCompleted()) {
+ 			front->onCompleted(secondsFromStart);
  			sequence.pop_front();
  		} else {
  			break;
@@ -27,12 +27,9 @@ void ProcessSequence::update(float secondsFromStart) {
  	}
 }
 
-bool ProcessSequence::isComplete() const {
+bool ProcessSequence::isCompleted() const {
 	return sequence.empty();
 }
 
-void ProcessSequence::addProcess(const std::shared_ptr<Process> &process) {
-	sequence.push_back(process);
-}
 
 }

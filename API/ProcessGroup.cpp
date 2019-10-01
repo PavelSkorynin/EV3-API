@@ -21,8 +21,8 @@ void ProcessGroup::update(float secondsFromStart) {
 	for (auto it = group.begin(); it != group.end(); ) {
 		auto &process = *it;
 		process->update(secondsFromStart);
- 		if (process->isComplete()) {
- 			process->onComplete(secondsFromStart);
+ 		if (process->isCompleted()) {
+ 			process->onCompleted(secondsFromStart);
  			it = group.erase(it);
  		} else {
  			++it;
@@ -30,11 +30,8 @@ void ProcessGroup::update(float secondsFromStart) {
 	}
 }
 
-bool ProcessGroup::isComplete() const {
+bool ProcessGroup::isCompleted() const {
 	return group.empty() && processesToAdd.empty();
 }
 
-void ProcessGroup::addProcess(const std::shared_ptr<Process> &process) {
-	processesToAdd.push_back(process);
-}
 }

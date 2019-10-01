@@ -19,9 +19,13 @@ public:
 	virtual ~ProcessSequence();
 
 	virtual void update(float secondsFromStart) override;
-	virtual bool isComplete() const override;
+	virtual bool isCompleted() const override;
 
-	void addProcess(const std::shared_ptr<Process> &process);
+	template<class ProcessClass>
+	void addProcess(const std::shared_ptr<ProcessClass> &process) {
+		static_assert(std::is_base_of<Process, ProcessClass>::value);
+		sequence.push_back(std::dynamic_pointer_cast<Process>(process));
+	}
 
 protected:
 	std::deque<std::shared_ptr<Process>> sequence;
