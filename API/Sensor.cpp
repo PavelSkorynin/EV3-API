@@ -69,7 +69,7 @@ ReflectedLightSensor::ReflectedLightSensor(Port port)
 {
 	setMode(ev3::Sensor::Mode::COLOR_REFLECT);
 	valueInput = WireI(std::function<int()>([this] () -> int {
-		return (int)clamp<float>(map<float>(this->value, this->minValue, this->maxValue, 0, 100) + 0.5f, 0, 100);
+		return (int)clamp<float>(round(map<float>(this->value, this->minValue, this->maxValue, 0, 100)), 0, 100);
 	}));
 }
 
@@ -106,7 +106,7 @@ HSV rgbToHsv(const RGB &rgb) {
 	float s = max == 0 ? 0 : (1 - min / max);
 	float v = max;
 
-	return HSV((short)(h + 0.5f), (unsigned char)(s * 100 + 0.5f), (unsigned char)(v * 100 + 0.5f));
+	return HSV((short)round(h), (unsigned char)round(s * 100), (unsigned char)round(v * 100));
 }
 
 RGB hsvToRgb(const HSV &hsv) {
@@ -146,7 +146,7 @@ RGB hsvToRgb(const HSV &hsv) {
 		Bs = X;
 	}
 
-	return RGB((Rs + m) * 255 + 0.5f, (Gs + m) * 255 + 0.5f, (Bs + m) * 255 + 0.5f);
+	return RGB(round((Rs + m) * 255), round((Gs + m) * 255), round((Bs + m) * 255));
 }
 
 ColorSensor::ColorSensor(Port port)
@@ -158,9 +158,9 @@ ColorSensor::ColorSensor(Port port)
 	valueInput = WireI([this] () {
 		auto value = this->value;
 		auto rgbColor = *(RGB*)(&value);
-		rgbColor.r = (unsigned char)clamp<float>(map<float>(rgbColor.r, this->minColor.r, this->maxColor.r, 0, 255) + 0.5f, 0, 255);
-		rgbColor.g = (unsigned char)clamp<float>(map<float>(rgbColor.g, this->minColor.g, this->maxColor.g, 0, 255) + 0.5f, 0, 255);
-		rgbColor.b = (unsigned char)clamp<float>(map<float>(rgbColor.b, this->minColor.b, this->maxColor.b, 0, 255) + 0.5f, 0, 255);
+		rgbColor.r = (unsigned char)clamp<float>(round(map<float>(rgbColor.r, this->minColor.r, this->maxColor.r, 0, 255)), 0, 255);
+		rgbColor.g = (unsigned char)clamp<float>(round(map<float>(rgbColor.g, this->minColor.g, this->maxColor.g, 0, 255)), 0, 255);
+		rgbColor.b = (unsigned char)clamp<float>(round(map<float>(rgbColor.b, this->minColor.b, this->maxColor.b, 0, 255)), 0, 255);
 		return *(int*)(&rgbColor);
 	});
 }
