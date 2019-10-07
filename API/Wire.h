@@ -23,7 +23,7 @@ public:
 	 * Конструктор от функции (лямбды). Функция будет вызываться каждый раз при вызове getValue.
 	 * @param provider функция, возвращающая текущее значение на проводе
 	 */
-	Wire(const std::function<T()> & provider)
+	Wire(std::function<T()> provider)
 		: provider(provider)
 	{
 	}
@@ -66,6 +66,12 @@ public:
 	{
 	}
 
+	Wire<T> & operator= (const Wire<T> & w)
+	{
+		provider = [w] { return (T)w.getValue(); };
+		return *this;
+	}
+
 	/**
 	 * Возвращает текущее значение на проводе
 	 * @return текущее значение
@@ -76,7 +82,7 @@ public:
 	}
 
 protected:
-	const std::function<T()> provider;
+	std::function<T()> provider;
 };
 
 /**

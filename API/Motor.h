@@ -126,6 +126,13 @@ public:
 	void setMaxAccelleration(float maxAcceleration);
 
 	/**
+	 * Масштабирование показаний енкодера. Используется для калибровки моторов.
+	 * При вызове getEncoder исходное значение будет умножаться на scale.
+	 * @param scale масштаб
+	 */
+	void setEncoderScale(float scale);
+
+	/**
 	 * Обновляет значение энкодера
 	 * @param timestampSeconds текущее время в секундах
 	 */
@@ -150,6 +157,8 @@ protected:
 	int zeroEncoder;
 	int encoder;
 	int tacho;
+
+	float encoderScale;
 
 	WireI speedInput;
 	WireI encoderInput;

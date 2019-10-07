@@ -55,6 +55,18 @@ enum class ButtonID : char {
 		 * @return умный указатель на датчик
 		 */
 		std::shared_ptr<Sensor> getSensor(Sensor::Port port, Sensor::Mode mode);
+		/**
+		 * Метод для получения подключенного к определённому порту датчика отражённого света
+		 * @param port номер порта на блоке EV3, к которому подключен датчик
+		 * @return умный указатель на датчик
+		 */
+		std::shared_ptr<ReflectedLightSensor> getReflectedLightSensor(Sensor::Port port);
+		/**
+		 * Метод для получения подключенного к определённому порту датчика цвета
+		 * @param port номер порта на блоке EV3, к которому подключен датчик
+		 * @return умный указатель на датчик
+		 */
+		std::shared_ptr<ColorSensor> getColorSensor(Sensor::Port port);
 
 		/**
 		 * Метод для получения мотора, подключенного к блоку EV3.
@@ -115,7 +127,18 @@ enum class ButtonID : char {
 		 * Внутри цикла происходит обновление входных и выходных данных.
 		 * @param process процесс на выполнение
 		 */
-		void runProcess(const std::shared_ptr<Process> &process);
+		template<class ProcessClass>
+		void runProcess(const std::shared_ptr<ProcessClass> &process) {
+			static_assert(std::is_base_of<Process, ProcessClass>::value);
+			float timestamp = this->timestamp();;
+			while (!process->isCompleted()) {
+				timestamp = this->timestamp();
+				updateInputs(timestamp);
+				process->update(timestamp);
+				updateOutputs(timestamp);
+			}
+			process->onCompleted(timestamp);
+		}
 
 		/**
 		 * Проверка, нажата ли какая-либо кнопка на блоке

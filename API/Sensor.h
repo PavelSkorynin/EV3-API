@@ -125,6 +125,162 @@ protected:
 	friend class EV3;
 };
 
+/**
+ * Датчик отражённого света
+ */
+class ReflectedLightSensor : public Sensor {
+public:
+	/**
+	 * Конструктор
+	 * @param port
+	 */
+	ReflectedLightSensor(Port port);
+
+	/**
+	 * Минимальное исходное значение на датчике
+	 * Используется для калибровки. getValue будет возвращать нормализованное значение
+	 * @param minValue
+	 */
+	void setMinValue(int minValue);
+	/**
+	 * Максимальное исходное значение на датчике
+	 * Используется для калибровки. getValue будет возвращать нормализованное значение
+	 * @param maxValue
+	 */
+	void setMaxValue(int maxValue);
+
+protected:
+	int minValue;
+	int maxValue;
+};
+
+#pragma pack(push, 1)
+/**
+ * Цвет в компонентах R (красный), G (зелёный), B (синий)
+ * Каждая компонента может принимать значения в итервале [0, 255]
+ */
+struct RGB {
+	unsigned char _unused;
+	unsigned char r;
+	unsigned char g;
+	unsigned char b;
+
+	RGB(unsigned char r, unsigned char g, unsigned char b)
+	: _unused(0), r(r), g(g), b(b) {
+
+	}
+};
+
+/**
+ * Цвет в компонентах H (hue, тон), S (saturation, насыщенность), V (value, значение)
+ * Допустимые значения:
+ * H - [0, 360]
+ * S - [0, 100]
+ * V - [0, 100]
+ */
+struct HSV {
+	short h;
+	unsigned char s;
+	unsigned char v;
+
+	HSV(short h, unsigned char s, unsigned char v)
+	: h(h), s(s), v(v) {
+
+	}
+};
+#pragma pack(pop)
+
+/**
+ * Преобразование цвета из модели RGB в HSV
+ * @param rgb
+ * @return hsv
+ */
+HSV rgbToHsv(const RGB &rgb);
+
+/**
+ * Преобразование цвета из модели HSV в RGB
+ * @param hsv
+ * @return rgb
+ */
+RGB hsvToRgb(const HSV &hsv);
+
+/**
+ * Датчик цвета. Возвращает цвет в двух форматах: RGB и HSV
+ */
+class ColorSensor : public Sensor {
+public:
+	/**
+	 * Конструктор
+	 * @param port
+	 */
+	ColorSensor(Port port);
+
+	/**
+	 * Цвет в формате RGB
+	 * @return цвет
+	 */
+	RGB getRGBColor() const;
+	/**
+	 * Цвет в формате RGB
+	 * @return цвет
+	 */
+	Wire<RGB> getRGBColorWire() const;
+
+	/**
+	 * Цвет в формате HSV
+	 * @return цвет
+	 */
+	HSV getHSVColor() const;
+	/**
+	 * Цвет в формате HSV
+	 * @return цвет
+	 */
+	Wire<HSV> getHSVColorWire() const;
+
+	/**
+	 * Минимальное исходное значение компоненты R на датчике
+	 * Используется для калибровки. getColor будет возвращать нормализованное значение
+	 * @param minValue
+	 */
+	void setMinRValue(unsigned char minValue);
+	/**
+	 * Максимальное исходное значение компоненты R на датчике
+	 * Используется для калибровки. getColor будет возвращать нормализованное значение
+	 * @param maxValue
+	 */
+	void setMaxRValue(unsigned char maxValue);
+
+	/**
+	 * Минимальное исходное значение компоненты G на датчике
+	 * Используется для калибровки. getColor будет возвращать нормализованное значение
+	 * @param minValue
+	 */
+	void setMinGValue(unsigned char minValue);
+	/**
+	 * Максимальное исходное значение компоненты G на датчике
+	 * Используется для калибровки. getColor будет возвращать нормализованное значение
+	 * @param maxValue
+	 */
+	void setMaxGValue(unsigned char maxValue);
+
+	/**
+	 * Минимальное исходное значение компоненты B на датчике
+	 * Используется для калибровки. getColor будет возвращать нормализованное значение
+	 * @param minValue
+	 */
+	void setMinBValue(unsigned char minValue);
+	/**
+	 * Максимальное исходное значение компоненты B на датчике
+	 * Используется для калибровки. getColor будет возвращать нормализованное значение
+	 * @param maxValue
+	 */
+	void setMaxBValue(unsigned char maxValue);
+
+protected:
+	RGB minColor;
+	RGB maxColor;
+};
+
 typedef std::shared_ptr<Sensor> SensorPtr;
 
 } /* namespace ev3 */

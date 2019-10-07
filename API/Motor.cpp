@@ -10,7 +10,7 @@
 #include "core/ev3_output.h"
 #include "core/ev3_lcd.h"
 
-#include <math.h>
+#include <cmath>
 
 namespace ev3 {
 
@@ -27,11 +27,12 @@ Motor::Motor(Port port)
 	, lastSpeed(0)
 	, lastTimestamp(0)
 	, zeroEncoder(0)
+	, encoderScale(1)
 	, speedInput([this]() -> int { return this->direction == Direction::FORWARD ? this->actualSpeed : -this->actualSpeed; })
 	, encoderInput([this]() -> int {
-		return this->direction == Direction::FORWARD
+		return round(encoderScale * (this->direction == Direction::FORWARD
 			? (this->encoder - this->zeroEncoder)
-					: (this->zeroEncoder - this->encoder);
+					: (this->zeroEncoder - this->encoder)));
 		})
 	, tachoInput([this]() -> int { return this->tacho; })
 {
@@ -92,6 +93,10 @@ void Motor::resetEncoder() {
 
 void Motor::setMaxAccelleration(float maxAcceleration) {
 	this->maxAcceleration = maxAcceleration;
+}
+
+void Motor::setEncoderScale(float scale) {
+	this->encoderScale = scale;
 }
 
 void Motor::updateInputs(float timestampSeconds) {

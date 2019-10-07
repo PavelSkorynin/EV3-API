@@ -10,6 +10,7 @@
 #include "core/ev3_core.h"
 #include <chrono>
 #include <thread>
+#include <type_traits>
 
 namespace ev3 {
 
@@ -55,17 +56,6 @@ namespace ev3 {
 		runProcess(std::dynamic_pointer_cast<Process>(process));
 	}
 
-	void EV3::runProcess(const std::shared_ptr<Process> &process) {
-		float timestamp = this->timestamp();;
-		while (!process->isComplete()) {
-			timestamp = this->timestamp();
-			updateInputs(timestamp);
-			process->update(timestamp);
-			updateOutputs(timestamp);
-		}
-		process->onComplete(timestamp);
-	}
-
 	bool EV3::isButtonDown(const ButtonID & buttonId) {
 		return buttonIsDown[(int)buttonId];
 	}
@@ -78,6 +68,24 @@ namespace ev3 {
 		sensorPtr->setMode(mode);
 		return sensorPtr;
 	}
+
+	std::shared_ptr<ReflectedLightSensor> EV3::getReflectedLightSensor(Sensor::Port port) {
+		auto& sensorPtr = sensors[port];
+		if (!sensorPtr || !std::dynamic_pointer_cast<ReflectedLightSensor>(sensorPtr)) {
+			sensorPtr.reset(new ReflectedLightSensor(port));
+		}
+		return std::dynamic_pointer_cast<ReflectedLightSensor>(sensorPtr);
+	}
+
+
+	std::shared_ptr<ColorSensor> EV3::getColorSensor(Sensor::Port port) {
+		auto& sensorPtr = sensors[port];
+		if (!sensorPtr || !std::dynamic_pointer_cast<ColorSensor>(sensorPtr)) {
+			sensorPtr.reset(new ColorSensor(port));
+		}
+		return std::dynamic_pointer_cast<ColorSensor>(sensorPtr);
+	}
+
 
 	std::shared_ptr<Motor> EV3::getMotor(Motor::Port port) {
 		auto& motorPtr = motors[port];
