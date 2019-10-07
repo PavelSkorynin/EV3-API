@@ -520,7 +520,7 @@ int SetAllSensorMode(int name_1, int name_2, int name_3, int name_4)
 		}
 	}
 	// Set actual device mode
-//	ioctl(g_uartFile, UART_SET_CONN, &devCon);
+	ioctl(g_uartFile, UART_SET_CONN, &devCon);
 	//ioctl(g_iicFile, IIC_SET_CONN, &devCon);
 	return 0;
 }
