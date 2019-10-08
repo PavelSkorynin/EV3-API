@@ -152,7 +152,7 @@ RGB hsvToRgb(const HSV &hsv) {
 ColorSensor::ColorSensor(Port port)
 	: Sensor(port)
 	, minColor(0, 0, 0)
-	, maxColor(0, 0, 0)
+	, maxColor(255, 255, 255)
 {
 	setMode(ev3::Sensor::Mode::COLOR_RGB);
 	valueInput = WireI([this] () {

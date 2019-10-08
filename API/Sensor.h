@@ -160,13 +160,13 @@ protected:
  * Каждая компонента может принимать значения в итервале [0, 255]
  */
 struct RGB {
-	unsigned char _unused;
-	unsigned char r;
-	unsigned char g;
 	unsigned char b;
+	unsigned char g;
+	unsigned char r;
+	unsigned char _unused;
 
 	RGB(unsigned char r, unsigned char g, unsigned char b)
-	: _unused(0), r(r), g(g), b(b) {
+	: b(b), g(g), r(r), _unused(0) {
 
 	}
 };
