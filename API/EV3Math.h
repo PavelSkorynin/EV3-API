@@ -17,7 +17,7 @@ namespace ev3 {
 
 	template<typename T>
 	inline T map(T value, T minSrc, T maxSrc, T minDst, T maxDst) {
-		return (value - minSrc) * (maxDst - minDst) / (maxSrc - minSrc) + minDst;
+		return maxSrc <= minSrc ? minDst : (value - minSrc) * (maxDst - minDst) / (maxSrc - minSrc) + minDst;
 	}
 
 	template<typename T>
