@@ -8,6 +8,7 @@
 #include "EV3.h"
 
 #include "core/ev3_core.h"
+#include "core/ev3_sensor.h"
 #include <chrono>
 #include <thread>
 #include <type_traits>
@@ -60,13 +61,34 @@ namespace ev3 {
 		return buttonIsDown[(int)buttonId];
 	}
 
-	std::shared_ptr<Sensor> EV3::getSensor(Sensor::Port port, Sensor::Mode mode) {
-		auto& sensorPtr = sensors[port];
-		if (!sensorPtr) {
-			sensorPtr.reset(new Sensor(port));
+	void EV3::initSensors(Sensor::Mode p1, Sensor::Mode p2, Sensor::Mode p3, Sensor::Mode p4) {
+		if (SetAllSensorMode((int)p1, (int)p2, (int)p3, (int)p4) != 0) {
+			LcdTextf(1, 0, 24, "ERROR: initSensors");
 		}
-		sensorPtr->setMode(mode);
-		return sensorPtr;
+
+		auto initSensor = [&](Sensor::Port port, Sensor::Mode mode) {
+			switch (mode) {
+			case Sensor::Mode::NO_SENSOR: break;
+			case Sensor::Mode::COLOR_REFLECT:
+				sensors[port] = std::shared_ptr<Sensor>(new ReflectedLightSensor(port));
+				break;
+			case Sensor::Mode::COLOR_RGB:
+				sensors[port] = std::shared_ptr<Sensor>(new ColorSensor(port));
+				break;
+			default:
+				sensors[port] = std::shared_ptr<Sensor>(new Sensor(port));
+				sensors[port]->setMode(mode);
+			}
+			return;
+		};
+		initSensor(Sensor::Port::P1, p1);
+		initSensor(Sensor::Port::P2, p2);
+		initSensor(Sensor::Port::P3, p3);
+		initSensor(Sensor::Port::P4, p4);
+	}
+
+	std::shared_ptr<Sensor> EV3::getSensor(Sensor::Port port) {
+		return sensors[port];
 	}
 
 	std::shared_ptr<ReflectedLightSensor> EV3::getReflectedLightSensor(Sensor::Port port) {

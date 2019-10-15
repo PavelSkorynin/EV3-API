@@ -47,6 +47,15 @@ enum class ButtonID : char {
 		~EV3();
 
 		/**
+		 * Инициализация сенсоров. Установка режимов работы для каждого порта.
+		 * @param p1 режима работы сенсора, подключенного к порту 1
+		 * @param p2 режима работы сенсора, подключенного к порту 2
+		 * @param p3 режима работы сенсора, подключенного к порту 3
+		 * @param p4 режима работы сенсора, подключенного к порту 4
+		 */
+		void initSensors(Sensor::Mode p1 = Sensor::Mode::NO_SENSOR, Sensor::Mode p2 = Sensor::Mode::NO_SENSOR, Sensor::Mode p3 = Sensor::Mode::NO_SENSOR, Sensor::Mode p4 = Sensor::Mode::NO_SENSOR);
+
+		/**
 		 * Метод для получения датчика, подключенного к блоку EV3.
 		 * При повторном запросе новый экземпляр класса Sensor не создаётся, вместо это возвращается
 		 * ранее созданный.
@@ -54,7 +63,7 @@ enum class ButtonID : char {
 		 * @param mode тип и режим работы датчика
 		 * @return умный указатель на датчик
 		 */
-		std::shared_ptr<Sensor> getSensor(Sensor::Port port, Sensor::Mode mode);
+		std::shared_ptr<Sensor> getSensor(Sensor::Port port);
 		/**
 		 * Метод для получения подключенного к определённому порту датчика отражённого света
 		 * @param port номер порта на блоке EV3, к которому подключен датчик

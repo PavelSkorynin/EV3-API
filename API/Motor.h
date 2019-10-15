@@ -116,6 +116,12 @@ public:
 	void setPower(const WireI & output);
 
 	/**
+	 * Актуальная мощность мотора, установленная на последней итерации
+	 * @return мощность мотора в интервале [0, 100]
+	 */
+	int getPower() const;
+
+	/**
 	 * Сбрасывает значение энкодера
 	 */
 	void resetEncoder();

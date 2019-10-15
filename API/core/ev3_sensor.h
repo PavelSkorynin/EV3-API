@@ -132,46 +132,6 @@ int SetIRBeaconCH(int sensorPort, int channel);
 #define BEACON_RIGHT 		11
 
 
-/**
- * COMPATIBILITY FUNCTION NAMES
- */
-
-/*!
- * @deprecated
-*/
-#define initSensors() SensorsInit()
-
-/*!
- * @deprecated
-*/
-#define InitSensors() SensorsInit()
-
-/*!
- * @deprecated
-*/
-#define readSensor(_sensorPort) ReadSensor(_sensorPort)
-
-/*!
- * @deprecated
-*/
-#define readSensorData(_sensorPort) ReadSensorData(_sensorPort)
-
-/*!
- * @deprecated
-*/
-#define setSensorMode(_sensorPort, _name) SetSensorMode(_sensorPort, _name)
-
-/*!
- * @deprecated
-*/
-#define setAllSensorMode(_name_1, _name_2, _name_3, _name_4) SetAllSensorMode(_name_1, _name_2, _name_3, _name_4)
-
-/*!
- * @deprecated
-*/
-#define setIRBeaconCH(_sensorPort, _channel) SetIRBeaconCH(_sensorPort, _channel)
-
-
 #endif // EV3SENSOR_H
 
 #ifdef __cplusplus

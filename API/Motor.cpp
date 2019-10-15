@@ -87,6 +87,10 @@ void Motor::setPower(const WireI & output) {
 	powerOutput = std::make_shared<WireI>(output);
 }
 
+int Motor::getPower() const {
+	return powerOutput->getValue();
+}
+
 void Motor::resetEncoder() {
 	zeroEncoder = encoder;
 }

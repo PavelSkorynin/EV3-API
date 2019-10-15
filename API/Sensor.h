@@ -113,8 +113,6 @@ public:
 protected:
 	Sensor(Port port);
 
-	static Mode selectedModes[4];
-
 	Port port;
 	Mode mode;
 
