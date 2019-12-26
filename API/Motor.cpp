@@ -55,6 +55,14 @@ void Motor::setDirection(const Direction & direction) {
 	SetDirection(P(port), P(direction));
 }
 
+void Motor::toggleDirection() {
+	if (getDirection() == Motor::Direction::FORWARD) {
+		setDirection(Motor::Direction::BACKWARD);
+	} else {
+		setDirection(Motor::Direction::FORWARD);
+	}
+}
+
 int Motor::getActualSpeed() const {
 	return speedInput.getValue();
 }

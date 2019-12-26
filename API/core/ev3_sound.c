@@ -603,7 +603,7 @@ void PlayToneEx(unsigned short frequency, unsigned short duration, uint8_t volum
 	(*SoundInstance.pSound).Busy = true;
 	uint8_t SoundData[6];
 	SoundData[0] = SOUND_CMD_TONE;
-	SoundData[1] = (uint8_t)((volume*13)/100);
+	SoundData[1] = (uint8_t)(volume);
 	SoundData[2] = (uint8_t)(frequency);
 	SoundData[3] = (uint8_t)(frequency >> 8);
 	SoundData[4] = (uint8_t)(duration);

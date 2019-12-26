@@ -65,6 +65,11 @@ public:
 	void setDirection(const Direction & direction);
 
 	/**
+	 * Инвертирует направление движения. Был FORWARD - стал BACKWARD и наоборот
+	 */
+	void toggleDirection();
+
+	/**
 	 * Текущая скорость вращения мотора.
 	 * Положительная, если фактическое направление вращения мотора совпадает с выбранным.
 	 * @return Скорость в интервале [0, 100]
@@ -176,6 +181,7 @@ protected:
 
 	friend class EV3;
 };
+
 
 typedef std::shared_ptr<Motor> MotorPtr;
 

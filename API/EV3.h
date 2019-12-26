@@ -78,6 +78,20 @@ enum class ButtonID : char {
 		std::shared_ptr<ColorSensor> getColorSensor(Sensor::Port port);
 
 		/**
+		 * Метод для получения "фейкового" сенсора.
+		 * @param valueInput провод со значениями, которые будет выдавать датчик
+		 * @return
+		 */
+		std::shared_ptr<FakeSensor> getFakeSensor(const ev3::WireI &valueInput);
+
+		/**
+		 * Метод для получения "фейкового" сенсора. Может использоваться для реализации движения по линии на одном датчике.
+		 * @param input значение, которое будет выдавать датчик
+		 * @return
+		 */
+		std::shared_ptr<FakeSensor> getFakeSensor(int value);
+
+		/**
 		 * Метод для получения мотора, подключенного к блоку EV3.
 		 * При повторном запросе новый экземпляр класса Motor не создаётся, вместо это возвращается
 		 * ранее созданный.
@@ -121,6 +135,13 @@ enum class ButtonID : char {
 		int lcdPrintf(Color color, const char *format, Args... args) {
 			return LcdPrintf((char)color, format, args...);
 		}
+		/**
+		 * Воспроизводит звук определённой частоты. Не дожидается окончания
+		 * @param frequency частота звука
+		 * @param duration длительность звука в секундах
+		 * @param volume громкость звука (от 0 до 1)
+		 */
+		void playSound(unsigned short frequency, float duration, float volume);
 		/**
 		 * Запускает цикл на синхронное выполнение в текущем потоке. Остановка происходит,
 		 * если передаваемая функция возвращает false.

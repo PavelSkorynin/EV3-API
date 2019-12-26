@@ -202,4 +202,26 @@ void ColorSensor::setMaxBValue(unsigned char maxValue) {
 	maxColor.b = maxValue;
 }
 
+//// FakeSensor
+
+FakeSensor::FakeSensor(const WireI &valueInput)
+	: Sensor(ev3::Sensor::Port::FAKE) {
+	this->valueInput = valueInput;
+	setMode(ev3::Sensor::Mode::FAKE);
+}
+
+FakeSensor::FakeSensor(int value)
+	: Sensor(ev3::Sensor::Port::FAKE) {
+	this->valueInput = ev3::WireI([value] { return value; });
+	setMode(ev3::Sensor::Mode::FAKE);
+}
+
+void FakeSensor::updateInputs(float timestampSeconds) {
+}
+
+void FakeSensor::updateOutputs(float timestampSeconds) {
+}
+
+
+
 } /* namespace ev3 */

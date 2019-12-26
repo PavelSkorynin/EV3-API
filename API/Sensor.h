@@ -28,7 +28,9 @@ public:
 		P1 = IN_1,//!< P1
 		P2 = IN_2,//!< P2
 		P3 = IN_3,//!< P3
-		P4 = IN_4 //!< P4
+		P4 = IN_4,//!< P4
+		//Fake
+		FAKE,
 	};
 
 	/**
@@ -63,6 +65,9 @@ public:
 		NXT_INFRARED_SEEK = NXT_IR_SEEKER, // Infrared Seeker
 		NXT_TEMPERATURE_C = NXT_TEMP_C, 	// Temperature in C
 		NXT_TEMPERATURE_F = NXT_TEMP_F, 	// Temperature in F
+
+		//Fake
+		FAKE,
 	};
 
 	~Sensor();
@@ -277,6 +282,25 @@ public:
 protected:
 	RGB minColor;
 	RGB maxColor;
+};
+
+class FakeSensor : public Sensor {
+public:
+	FakeSensor(const WireI &valueInput);
+
+	FakeSensor(int value);
+
+	/**
+	 * Обновление данных, получаемых с датчика
+	 * @param timestampSeconds текущее время в секундах
+	 */
+	void updateInputs(float timestampSeconds) override;
+	/**
+	 * Наследуемый метод. Ничего не делает
+	 * @param timestampSeconds текущее время в секундах
+	 */
+	void updateOutputs(float timestampSeconds) override;
+
 };
 
 typedef std::shared_ptr<Sensor> SensorPtr;

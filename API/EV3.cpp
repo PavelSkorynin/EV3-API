@@ -9,6 +9,8 @@
 
 #include "core/ev3_core.h"
 #include "core/ev3_sensor.h"
+#include "core/ev3_sound.h"
+#include "ev3math.h"
 #include <chrono>
 #include <thread>
 #include <type_traits>
@@ -50,6 +52,15 @@ namespace ev3 {
 			updateInputs(timestamp);
 			updateOutputs(timestamp);
 		}
+	}
+
+	void EV3::playSound(unsigned short frequency, float duration, float volume) {
+		if (duration < 0) {
+			return;
+		}
+		unsigned short dur = duration * 1000;
+		uint8_t vol = ev3::clamp<uint8_t>(volume * 100, 0, 100);
+		PlayToneEx(frequency, dur, vol);
 	}
 
 	void EV3::runLoop(const std::function<bool(float)> &update) {
@@ -106,6 +117,16 @@ namespace ev3 {
 			sensorPtr.reset(new ColorSensor(port));
 		}
 		return std::dynamic_pointer_cast<ColorSensor>(sensorPtr);
+	}
+
+
+	std::shared_ptr<FakeSensor> getFakeSensor(const ev3::WireI &valueInput) {
+		return std::make_shared<FakeSensor>(valueInput);
+	}
+
+
+	std::shared_ptr<FakeSensor> getFakeSensor(int value) {
+		return std::make_shared<FakeSensor>(value);
 	}
 
 
