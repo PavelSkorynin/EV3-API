@@ -2,26 +2,32 @@
  * ProcessGroup.cpp
  *
  *  Created on: 12 сент. 2019 г.
- *      Author: Pavel
+ *      Author: Pavel Skorynin
  */
 
 #include "ProcessGroup.h"
 
 namespace ev3 {
-ProcessGroup::ProcessGroup() {
-}
-
-ProcessGroup::~ProcessGroup() {
+ProcessGroup::ProcessGroup(bool completeIfAnyIsCompleted)
+	: completeIfAnyIsCompleted(completeIfAnyIsCompleted) {
 }
 
 void ProcessGroup::update(float secondsFromStart) {
+	Process::update(secondsFromStart);
 	group.insert(processesToAdd.begin(), processesToAdd.end());
 	processesToAdd.clear();
 
 	for (auto it = group.begin(); it != group.end(); ) {
-		auto &process = *it;
+		auto process = *it;
 		process->update(secondsFromStart);
  		if (process->isCompleted()) {
+ 			if (completeIfAnyIsCompleted) {
+ 				for (const auto &process : group) {
+ 					process->onCompleted(secondsFromStart);
+ 				}
+ 				group.clear();
+ 				return;
+ 			}
  			process->onCompleted(secondsFromStart);
  			it = group.erase(it);
  		} else {

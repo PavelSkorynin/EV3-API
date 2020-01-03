@@ -2,7 +2,7 @@
  * ProcessSequence.h
  *
  *  Created on: 12 сент. 2019 г.
- *      Author: Pavel
+ *      Author: Pavel Skorynin
  */
 
 #ifndef PROCESSSEQUENCE_H_
@@ -16,19 +16,59 @@ namespace ev3 {
 class ProcessSequence: public Process {
 public:
 	ProcessSequence();
-	virtual ~ProcessSequence();
+	ProcessSequence(ProcessSequence &&) = default;
+	ProcessSequence(const ProcessSequence &) = default;
+	virtual ~ProcessSequence() = default;
+
+	ProcessSequence& operator=(const ProcessSequence&) = default;
+	ProcessSequence& operator=(ProcessSequence&&) = default;
 
 	virtual void update(float secondsFromStart) override;
 	virtual bool isCompleted() const override;
 
+	template<class ProcessClassA>
+	ProcessSequence& operator>>=(ProcessClassA &&processA) {
+		static_assert(std::is_base_of<Process, ProcessClassA>::value);
+		addProcess(processA);
+		return *this;
+	}
+
 	template<class ProcessClass>
-	void addProcess(const std::shared_ptr<ProcessClass> &process) {
+	void addProcess(ProcessClass &&process) {
 		static_assert(std::is_base_of<Process, ProcessClass>::value);
-		sequence.push_back(std::dynamic_pointer_cast<Process>(process));
+		sequence.push_back(std::make_shared<ProcessClass>(process));
+	}
+	template<class ProcessClass>
+	void addProcess(ProcessClass &process) {
+		static_assert(std::is_base_of<Process, ProcessClass>::value);
+		sequence.push_back(std::make_shared<ProcessClass>(process));
+	}
+	template<class ProcessClass>
+	void addProcess(std::shared_ptr<ProcessClass> process) {
+		static_assert(std::is_base_of<Process, ProcessClass>::value);
+		sequence.push_back(process);
 	}
 
 protected:
 	std::deque<std::shared_ptr<Process>> sequence;
 };
+
+template<class ProcessClassA, class ProcessClassB>
+ProcessSequence operator>>(ProcessClassA &&processA, ProcessClassB &&processB) {
+	static_assert(std::is_base_of<Process, ProcessClassA>::value);
+	static_assert(std::is_base_of<Process, ProcessClassB>::value);
+	ProcessSequence sequence;
+	sequence.addProcess(processA);
+	sequence.addProcess(processB);
+	return sequence;
+}
+
+template<class ProcessClassB>
+ProcessSequence& operator>>(ProcessSequence &sequence, ProcessClassB &&processB) {
+	static_assert(std::is_base_of<Process, ProcessClassB>::value);
+	sequence.addProcess(processB);
+	return sequence;
+}
+
 }
 #endif /* PROCESSSEQUENCE_H_ */

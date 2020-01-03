@@ -158,7 +158,7 @@ enum class ButtonID : char {
 		 * @param process процесс на выполнение
 		 */
 		template<class ProcessClass>
-		void runProcess(const std::shared_ptr<ProcessClass> &process) {
+		void runProcess(ProcessClass *process) {
 			static_assert(std::is_base_of<Process, ProcessClass>::value);
 			float timestamp = this->timestamp();;
 			while (!process->isCompleted()) {
@@ -168,6 +168,44 @@ enum class ButtonID : char {
 				updateOutputs(timestamp);
 			}
 			process->onCompleted(timestamp);
+		}
+
+		/**
+		 * Запускает цикл на синхронное выполнение процесса в текущем потоке. Остановка происходит,
+		 * когда завершается процесс.
+		 * Внутри цикла происходит обновление входных и выходных данных.
+		 * @param process процесс на выполнение
+		 */
+		template<class ProcessClass>
+		void runProcess(std::shared_ptr<ProcessClass> process) {
+			static_assert(std::is_base_of<Process, ProcessClass>::value);
+			float timestamp = this->timestamp();;
+			while (!process->isCompleted()) {
+				timestamp = this->timestamp();
+				updateInputs(timestamp);
+				process->update(timestamp);
+				updateOutputs(timestamp);
+			}
+			process->onCompleted(timestamp);
+		}
+
+		/**
+		 * Запускает цикл на синхронное выполнение процесса в текущем потоке. Остановка происходит,
+		 * когда завершается процесс.
+		 * Внутри цикла происходит обновление входных и выходных данных.
+		 * @param process процесс на выполнение
+		 */
+		template<class ProcessClass>
+		void runProcess(ProcessClass &process) {
+			static_assert(std::is_base_of<Process, ProcessClass>::value);
+			float timestamp = this->timestamp();;
+			while (!process.isCompleted()) {
+				timestamp = this->timestamp();
+				updateInputs(timestamp);
+				process.update(timestamp);
+				updateOutputs(timestamp);
+			}
+			process.onCompleted(timestamp);
 		}
 
 		/**

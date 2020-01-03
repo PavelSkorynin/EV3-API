@@ -5,8 +5,7 @@
  *      Author: Pavel Skorynin
  */
 
-#ifndef PROCESS_H_
-#define PROCESS_H_
+#pragma once
 
 #include <functional>
 
@@ -15,14 +14,29 @@ namespace ev3 {
  * Класс для организации процесса обработки данных
  */
 	class Process {
+	protected:
+		bool isStarted;
 	public:
-		virtual ~Process() {}
+		Process() : isStarted(false) {}
+		Process(Process &&) = default;
+		Process(const Process &) = default;
+
+		Process& operator=(const Process&) = default;
+		Process& operator=(Process&&) = default;
+
+		virtual ~Process() = default;
 
 		/**
 		 * Обновление
 		 * @param secondsFromStart текущее время в секундах
 		 */
-		virtual void update(float secondsFromStart) = 0;
+		virtual void update(float secondsFromStart);
+
+		/**
+		 * Метод вызывается, когда первый раз вызывается update
+		 * @param secondsFromStart
+		 */
+		virtual void onStarted(float secondsFromStart);
 
 		/**
 		 * Метод вызывается, когда процесс завершён
@@ -57,6 +71,7 @@ namespace ev3 {
 		TimeProcess(const std::function<void(float)> &updateFunc, float duration, float delay = 0.0f);
 		TimeProcess(const std::function<void(float)> &updateFunc, const std::function<void(float)> &onCompletedFunc, float duration, float delay = 0.0f);
 
+		virtual void onStarted(float secondsFromStart) override;
 		virtual void update(float secondsFromStart) override;
 		virtual void onCompleted(float secondsFromStart) override;
 		virtual bool isCompleted() const override;
@@ -64,12 +79,9 @@ namespace ev3 {
 	protected:
 		std::function<void(float)> updateFunc;
 		std::function<void(float)> onCompletedFunc;
-		bool isInitialized;
 		bool completed;
 		float startTime;
 		float duration;
 		float delay;
 	};
 }
-
-#endif /* PROCESS_H_ */

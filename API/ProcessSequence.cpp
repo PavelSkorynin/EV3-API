@@ -2,7 +2,7 @@
  * ProcessSequence.cpp
  *
  *  Created on: 12 сент. 2019 г.
- *      Author: Pavel
+ *      Author: Pavel Skorynin
  */
 
 #include "ProcessSequence.h"
@@ -11,10 +11,8 @@ namespace ev3 {
 ProcessSequence::ProcessSequence() {
 }
 
-ProcessSequence::~ProcessSequence() {
-}
-
 void ProcessSequence::update(float secondsFromStart) {
+	Process::update(secondsFromStart);
  	while (!sequence.empty()) {
  		auto& front = sequence.front();
  		front->update(secondsFromStart);

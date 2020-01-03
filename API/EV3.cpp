@@ -65,7 +65,7 @@ namespace ev3 {
 
 	void EV3::runLoop(const std::function<bool(float)> &update) {
 		auto process = std::make_shared<LambdaProcess>(update);
-		runProcess(std::dynamic_pointer_cast<Process>(process));
+		runProcess(process);
 	}
 
 	bool EV3::isButtonDown(const ButtonID & buttonId) {
