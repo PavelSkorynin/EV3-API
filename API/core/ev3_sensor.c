@@ -420,7 +420,7 @@ int SetAllSensorMode(int name_1, int name_2, int name_3, int name_4)
 	int name[4] = {name_1, name_2, name_3, name_4};
 
 	if (!g_analogSensors)
-		InitSensors();
+		SensorsInit();
 
 	// Setup of Input
 	for(sensorPort=0; sensorPort<4; sensorPort++)
