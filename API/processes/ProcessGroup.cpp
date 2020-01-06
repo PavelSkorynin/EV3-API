@@ -5,7 +5,7 @@
  *      Author: Pavel Skorynin
  */
 
-#include "ProcessGroup.h"
+#include "ProcessGroup.hpp"
 
 namespace ev3 {
 ProcessGroup::ProcessGroup(bool completeIfAnyIsCompleted)
@@ -14,7 +14,7 @@ ProcessGroup::ProcessGroup(bool completeIfAnyIsCompleted)
 
 void ProcessGroup::update(float secondsFromStart) {
 	Process::update(secondsFromStart);
-	group.insert(processesToAdd.begin(), processesToAdd.end());
+	group.insert(group.end(), processesToAdd.begin(), processesToAdd.end());
 	processesToAdd.clear();
 
 	for (auto it = group.begin(); it != group.end(); ) {
@@ -39,5 +39,9 @@ void ProcessGroup::update(float secondsFromStart) {
 bool ProcessGroup::isCompleted() const {
 	return group.empty() && processesToAdd.empty();
 }
+
+ProcessGroupOr::ProcessGroupOr() : ProcessGroup(false) {}
+
+ProcessGroupAnd::ProcessGroupAnd() : ProcessGroup(true) {}
 
 }

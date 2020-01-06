@@ -5,7 +5,7 @@
  *      Author: Pavel Skorynin
  */
 
-#include "ProcessSequence.h"
+#include "ProcessSequence.hpp"
 
 namespace ev3 {
 ProcessSequence::ProcessSequence() {

@@ -19,12 +19,12 @@ AR = $(PREFIX)ar
 CORE_SRCS = $(wildcard core/*.c)
 CORE_INCLUDE = $(patsubst %,out/include/%,$(wildcard core/*.h))
 CORE_OBJS = $(patsubst %,out/obj/%.o,$(CORE_SRCS))
-CPP_SRCS = $(wildcard *.cpp)
-CPP_INCLUDE = $(patsubst %,out/include/%,$(wildcard *.h))
+CPP_SRCS = $(wildcard *.cpp) $(wildcard processes/*.cpp)
+CPP_INCLUDE = $(patsubst %,out/include/%,$(wildcard *.h)) $(patsubst %,out/include/%,$(wildcard processes/*.hpp))
 CPP_OBJS = $(patsubst %,out/obj/%.o,$(CPP_SRCS))
 CFLAGS += -fno-strict-aliasing
 CFLAGS += -Wall -Wextra -Wpointer-sign -Wno-unused-parameter
-CXXFLAGS += -fno-strict-aliasing --std=c++17 -Wall
+CXXFLAGS += -fno-strict-aliasing --std=c++17 -Wall -O3
 
 .DEFAULT: all
 all: out/lib/libev3apicore.a out/lib/libev3api.a
@@ -48,8 +48,9 @@ out/include/%.h: %.h
 	$(MKDIR) $(call FixPath,$(@D)) || @echo
 	$(COPY) $(call FixPath,$<) $(call FixPath,$@)
 
-example:
-	echo 'int main(void) { return EV3IsInitialized() == 1; }' | $(CC) -xc $(CFLAGS) - -L. -lev3apicore -I. -oexample -include core/ev3.h
+out/include/%.hpp: %.hpp
+	$(MKDIR) $(call FixPath,$(@D)) || @echo
+	$(COPY) $(call FixPath,$<) $(call FixPath,$@)
 
 .PHONY: clean
 clean:
