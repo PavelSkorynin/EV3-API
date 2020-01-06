@@ -14,6 +14,7 @@
 #include "processes/MoveOnLineProcess.hpp"
 #include "processes/StopByEncoderOnArcProcess.hpp"
 #include "processes/StopOnLineProcess.hpp"
+#include "processes/StopProcess.hpp"
 #include "processes/WaitColorProcess.hpp"
 #include "processes/WaitCrossProcess.hpp"
 #include "processes/WaitLineProcess.hpp"

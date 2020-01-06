@@ -16,7 +16,7 @@
 namespace ev3 {
 class ProcessGroup: public Process {
 public:
-	ProcessGroup(bool completeIfAnyIsCompleted = false);
+	explicit ProcessGroup(bool completeIfAnyIsCompleted = false);
 	ProcessGroup(ProcessGroup&&) = default;
 	ProcessGroup(const ProcessGroup&) = default;
 	virtual ~ProcessGroup() = default;

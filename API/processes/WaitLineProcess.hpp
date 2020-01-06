@@ -14,7 +14,7 @@ namespace ev3 {
 
 class WaitLineProcess: public Process {
 public:
-	WaitLineProcess(const SensorPtr &lightSensor);
+	explicit WaitLineProcess(const SensorPtr &lightSensor);
 	virtual ~WaitLineProcess() = default;
 
 	virtual bool isCompleted() const;
