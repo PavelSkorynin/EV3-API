@@ -19,6 +19,10 @@ public:
 
 	virtual bool isCompleted() const;
 
+	/**
+	 * Установить порог яркости, при котором завершится процесс
+	 * @param threshold, значение по умолчанию 50
+	 */
 	void setThreshold(int threshold);
 
 protected:

@@ -41,6 +41,7 @@ WireF PID::getPowerWire() const {
 }
 
 void PID::update(float secondsFromStart) {
+	Process::update(secondsFromStart);
 	if (!errorWire) {
 		return;
 	}
@@ -59,5 +60,12 @@ void PID::update(float secondsFromStart) {
 bool PID::isCompleted() const {
 	return isCompletedFunc();
 }
+
+void PID::setPID(float kP, float kI, float kD) {
+	this->kp = kP;
+	this->ki = kI;
+	this->kd = kD;
+}
+
 
 } /* namespace ev3 */

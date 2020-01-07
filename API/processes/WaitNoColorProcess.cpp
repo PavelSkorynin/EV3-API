@@ -12,7 +12,8 @@ namespace ev3 {
 WaitNoColorProcess::WaitNoColorProcess(const std::shared_ptr<ColorSensor> &colorSensor)
 	: colorSensor(colorSensor)
 	, lastColorTimestamp(0)
-	, foundNoColor(false) {
+	, foundNoColor(false)
+	, timeout(0.01f) {
 }
 
 void WaitNoColorProcess::onStarted(float secondsFromStart) {
@@ -29,11 +30,16 @@ void WaitNoColorProcess::update(float secondsFromStart) {
 		lastColorTimestamp = secondsFromStart;
 	}
 
-	foundNoColor = (secondsFromStart - lastColorTimestamp > 0.01);
+	foundNoColor = (secondsFromStart - lastColorTimestamp >= timeout);
 }
 
 bool WaitNoColorProcess::isCompleted() const {
 	return foundNoColor;
 }
+
+void WaitNoColorProcess::setTimeout(float timeout) {
+	this->timeout = timeout;
+}
+
 
 }

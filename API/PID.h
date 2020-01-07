@@ -56,7 +56,15 @@ public:
 	 * Признак завершённости процесса
 	 * @return возвращает результат функции isCompleted, переданной в конструктор
 	 */
-	bool isCompleted() const override;
+	bool isCompleted() const;
+
+	/**
+	 * Установить коэффициенты ПИД-регулятора
+	 * @param kP пропорциональная составляющая
+	 * @param kI интегральная составляющая
+	 * @param kD дифференциальная составляющая
+	 */
+	void setPID(float kP, float kI, float kD);
 
 protected:
 	float kp;

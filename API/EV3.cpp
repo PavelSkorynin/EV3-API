@@ -10,6 +10,7 @@
 #include "core/ev3_core.h"
 #include "core/ev3_sensor.h"
 #include "core/ev3_sound.h"
+#include "core/ev3_button.h"
 #include "ev3math.h"
 #include <chrono>
 #include <thread>
@@ -32,6 +33,7 @@ namespace ev3 {
 		: zeroTimestamp(current_timestamp())
 		, buttonStateChangingTimestamp {0, 0, 0, 0, 0, 0}
 		, buttonIsDown {false, false, false, false, false, false}
+		, onButtonClickListeners(6, []() {})
 	{
 		InitEV3();
 	}
@@ -68,7 +70,7 @@ namespace ev3 {
 		runProcess(process);
 	}
 
-	bool EV3::isButtonDown(const ButtonID & buttonId) {
+	bool EV3::isButtonDown(ButtonID buttonId) {
 		return buttonIsDown[(int)buttonId];
 	}
 
@@ -159,6 +161,10 @@ namespace ev3 {
 			if (timestampSeconds - buttonStateChangingTimestamp[buttonId] > debounceTime) {
 				buttonStateChangingTimestamp[buttonId] = timestampSeconds;
 				buttonIsDown[buttonId] = !buttonIsDown[buttonId];
+
+				if (!buttonIsDown[buttonId]) {
+					onButtonClickListeners[buttonId]();
+				}
 			}
 		}
 
@@ -180,6 +186,18 @@ namespace ev3 {
 				pair.second->updateOutputs(timestampSeconds);
 			}
 		}
+	}
+
+	void EV3::setOnButtonClickListener(ButtonID buttonId, const std::function<void()> &onClick) {
+		onButtonClickListeners[(int)buttonId] = onClick;
+	}
+
+	std::string EV3::getHardwareVersion() {
+		return HardwareVersionString();
+	}
+
+	void EV3::setLEDPattern(LEDPattern ledPattern) {
+		SetLedPattern((uint8_t)ledPattern);
 	}
 
 }

@@ -9,14 +9,17 @@
 
 namespace ev3 {
 
-GetColorProcess::GetColorProcess(const std::shared_ptr<ColorSensor> &colorSensor, const std::vector<int> &colors, float duration)
+GetColorProcess::GetColorProcess(const std::shared_ptr<ColorSensor> &colorSensor, std::vector<int> colors, float duration)
 	: colorSensor(colorSensor)
-	, colors(colors)
+	, colors(std::move(colors))
 	, duration(duration)
 	, modes()
 	, startTimestamp(0)
 	, detectedColor(NO_COLOR)
-	, completed(false) {
+	, completed(false)
+	, blackVThreshold(10)
+	, whiteSThreshold(20)
+	, whiteVThreshold(60) {
 
 }
 
@@ -43,9 +46,9 @@ void GetColorProcess::update(float secondsFromStart) {
 
 	if (hsv.h == 0 && hsv.s == 0 && hsv.v == 0) {
 		modes[colors.size() - 1 - NO_COLOR]++;
-	} else if (hsv.v < 10) {
+	} else if (hsv.v < blackVThreshold) {
 		modes[colors.size() - 1 - BLACK_COLOR]++;
-	} else if (hsv.s < 20 && hsv.v > 60) {
+	} else if (hsv.s < whiteSThreshold && hsv.v > whiteVThreshold) {
 		modes[colors.size() - 1 - WHITE_COLOR]++;
 	} else {
 		int minDistance = 1000;
@@ -82,6 +85,15 @@ bool GetColorProcess::isCompleted() const {
 
 int GetColorProcess::getColor() const {
 	return detectedColor;
+}
+
+void GetColorProcess::setBlackThresholds(unsigned char vThreshold) {
+	blackVThreshold = vThreshold;
+}
+
+void GetColorProcess::setWhiteThresholds(unsigned char sThreshold, unsigned char vThreshold) {
+	whiteSThreshold = sThreshold;
+	whiteVThreshold = vThreshold;
 }
 
 }

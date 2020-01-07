@@ -69,4 +69,9 @@ void MoveOnLineProcess::setMaxPower(int _maxPower) {
 	maxPower = _maxPower;
 }
 
+void MoveOnLineProcess::setPID(float kP, float kI, float kD) {
+	pd.setPID(kP, kI, kD);
+}
+
+
 }

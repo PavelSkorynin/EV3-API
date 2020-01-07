@@ -21,6 +21,10 @@ StopOnLineProcess::StopOnLineProcess(MotorPtr leftMotor_, MotorPtr rightMotor_,
 	, rightLight(rightLight_)
 	, encoderDistance(encoderDistance_)
 	, maxPower(maxPower_)
+	, minPower(7)
+	, anchorEncoder(50)
+	, powerThreshold(5)
+	, speedThreshold(3)
 	, powerPD(0.5f, 0.0f, 1.2f)
 	, moveOnLineProcess(std::make_shared<MoveOnLineProcess>(leftMotor_, rightMotor_, leftLight_, rightLight_, INT32_MAX / 16, maxPower_)) {
 }
@@ -33,17 +37,15 @@ void StopOnLineProcess::onStarted(float secondsFromStart) {
 
 void StopOnLineProcess::update(float secondsFromStart) {
 	Process::update(secondsFromStart);
-    const int minPower = 7;
-	const float anchor = 50;
 	const float scale = 1.0f;
 
 	powerPD.update(secondsFromStart);
-	const float value = powerPD.getPower() / anchor;
+	const float value = powerPD.getPower() / anchorEncoder;
 	float relativePower = 0;
 	if (value > 0) {
-		relativePower = clamp<int>(powf(value, 0.8f) * anchor * scale + minPower, -abs(maxPower), abs(maxPower));
+		relativePower = clamp<int>(powf(value, 0.8f) * anchorEncoder * scale + minPower, -abs(maxPower), abs(maxPower));
 	} else {
-		relativePower = clamp<int>(-powf(-value, 0.8f) * anchor * scale - minPower, -abs(maxPower), abs(maxPower));
+		relativePower = clamp<int>(-powf(-value, 0.8f) * anchorEncoder * scale - minPower, -abs(maxPower), abs(maxPower));
 	}
 
 	moveOnLineProcess->setMaxPower(relativePower);
@@ -51,13 +53,37 @@ void StopOnLineProcess::update(float secondsFromStart) {
 }
 
 bool StopOnLineProcess::isCompleted() const {
-	return powerPD.getPower() < 5 && (abs(leftMotor->getActualSpeed()) + abs(rightMotor->getActualSpeed())) < 4;
+	return powerPD.getPower() < powerThreshold && abs(leftMotor->getActualSpeed()) < speedThreshold && abs(rightMotor->getActualSpeed()) < speedThreshold;
 }
 
 void StopOnLineProcess::onCompleted(float secondsFromStart) {
 	moveOnLineProcess->onCompleted(secondsFromStart);
 	leftMotor->setPower(0);
 	rightMotor->setPower(0);
+}
+
+void StopOnLineProcess::setMovePID(float kP, float kI, float kD) {
+	moveOnLineProcess->setPID(kP, kI, kD);
+}
+
+void StopOnLineProcess::setPowerPID(float kP, float kI, float kD) {
+	powerPD.setPID(kP, kI, kD);
+}
+
+void StopOnLineProcess::setMinPower(int minPower) {
+	this->minPower = minPower;
+}
+
+void StopOnLineProcess::setAnchorEncoder(float anchorEncoder) {
+	this->anchorEncoder = anchorEncoder;
+}
+
+void StopOnLineProcess::setPowerThreshold(int powerThreshold) {
+	this->powerThreshold = powerThreshold;
+}
+
+void StopOnLineProcess::setSpeedThreshold(int speedThreshold) {
+	this->speedThreshold = speedThreshold;
 }
 
 }

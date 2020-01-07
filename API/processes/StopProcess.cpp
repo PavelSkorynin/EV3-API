@@ -10,7 +10,8 @@
 namespace ev3 {
 
 StopProcess::StopProcess(const MotorPtr &motor)
-	: motor(motor) {
+	: motor(motor)
+	, speedThreshold(3) {
 }
 
 void StopProcess::onStarted(float secondsFromStart) {
@@ -20,7 +21,11 @@ void StopProcess::onStarted(float secondsFromStart) {
 }
 
 bool StopProcess::isCompleted() const {
-	 return abs(motor->getActualSpeed()) < 3;
+	 return abs(motor->getActualSpeed()) < speedThreshold;
+}
+
+void StopProcess::setSpeedThreshold(int speedThreshold) {
+	this->speedThreshold = speedThreshold;
 }
 
 } /* namespace ev3 */

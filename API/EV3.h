@@ -14,7 +14,9 @@
 
 #include "core/ev3_lcd.h"
 
+#include <string>
 #include <map>
+#include <functional>
 
 namespace ev3 {
 
@@ -29,13 +31,27 @@ enum class Color : char {
 /**
  * Идентификатор кнопки на блоке EV3
  */
-enum class ButtonID : char {
+enum class ButtonID : uint8_t {
 	UP = 0,    //!< UP
 	ENTER = 1, //!< ENTER
 	DOWN = 2,  //!< DOWN
 	RIGHT = 3, //!< RIGHT
 	LEFT = 4,  //!< LEFT
 	ESCAPE = 5,//!< ESCAPE
+};
+
+enum class LEDPattern : uint8_t {
+	OFF = 0,  //!< LED black pattern
+	GREEN = 1,  //!< LED green pattern
+	RED = 2,  //!< LED red pattern
+	ORANGE = 3,  //!< LED orange pattern
+	GREEN_FLASH = 4,  //!< LED green flash pattern
+	RED_FLASH = 5,  //!< LED red flash pattern
+	ORANGE_FLASH = 6,  //!< LED orange flash pattern
+	GREEN_PULSE = 7,  //!< LED green pulse pattern
+	RED_PULSE = 8,  //!< LED red pulse pattern
+	ORANGE_PULSE = 9,  //!< LED orange pulse pattern
+	COUNT = 10, //!< The number of LED patterns
 };
 
 /**
@@ -232,7 +248,14 @@ enum class ButtonID : char {
 		 * @param buttonId идентификатор кнопки
 		 * @return true, если кнопка нажата
 		 */
-		bool isButtonDown(const ButtonID & buttonId);
+		bool isButtonDown(ButtonID buttonId);
+
+		/**
+		 * Установить обработчик нажатия на одну из кнопок блока
+		 * @param buttonId идентификатор кнопки
+		 * @param buttonId onCLick обработчик нажатия
+		 */
+		void setOnButtonClickListener(ButtonID buttonId, const std::function<void()> &onClick);
 
 		/**
 		 * Обновляет все входные данные (энкодеры моторов, показания датчиков, состояние кнопок)
@@ -244,6 +267,19 @@ enum class ButtonID : char {
 		 * @param timestampSeconds текущее время в секундах
 		 */
 		void updateOutputs(float timestampSeconds);
+
+		/**
+		 * Возращает версию программного обеспечения, установленного на блок EV3
+		 * @return версия прошивки
+		 */
+		std::string getHardwareVersion();
+
+		/**
+		 * Устанавливает режим работы светодиода на блоке EV3
+		 * @param ledPattern режим работы
+		 */
+		void setLEDPattern(LEDPattern ledPattern);
+
 	private:
 		std::map<Sensor::Port, std::shared_ptr<Sensor>> sensors;
 		std::map<Motor::Port, std::shared_ptr<Motor>> motors;
@@ -253,6 +289,7 @@ enum class ButtonID : char {
 		static const int buttonsCount = 6;
 		float buttonStateChangingTimestamp[buttonsCount];
 		bool buttonIsDown[buttonsCount];
+		std::vector<std::function<void()>> onButtonClickListeners;
 	};
 }
 

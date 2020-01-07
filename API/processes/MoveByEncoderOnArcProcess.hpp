@@ -24,7 +24,19 @@ public:
 	virtual void onCompleted(float secondsFromStart) override;
 	virtual bool isCompleted() const;
 
+	/**
+	 * Установить максимальную мощность двигателей
+	 * @param maxPower максимальная мощность (от 0 до 100)
+	 */
 	void setMaxPower(int maxPower);
+
+	/**
+	 * Установить коэффициенты ПИД-регулятора
+	 * @param kP пропорциональная составляющая
+	 * @param kI интегральная составляющая
+	 * @param kD дифференциальная составляющая
+	 */
+	void setPID(float kP, float kI, float kD);
 protected:
 	MotorPtr leftMotor;
 	MotorPtr rightMotor;

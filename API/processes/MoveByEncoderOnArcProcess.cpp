@@ -114,4 +114,9 @@ void MoveByEncoderOnArcProcess::setMaxPower(int _maxPower) {
 	maxPower = _maxPower;
 }
 
+void MoveByEncoderOnArcProcess::setPID(float kP, float kI, float kD) {
+	pd.setPID(kP, kI, kD);
+}
+
+
 }

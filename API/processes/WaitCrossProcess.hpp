@@ -22,10 +22,17 @@ public:
 	virtual void onStarted(float secondsFromStart) override;
 	virtual bool isCompleted() const;
 
-	// разница показаний между текущей яркостью и яркостью в начале окна, default = -30
+	/**
+	 * Установить разницу показаний между текущей яркостью и яркостью в начале окна, при которой завершается процесс
+	 * @param deltaThreshold значение по умолчанию -30
+	 */
 	void setDeltaThreshold(int deltaThreshold);
-	// среднее значение яркости в окне, default = 50
-	void setMeanThreshold(int deltaThreshold);
+
+	/**
+	 * Установить пороговое среднее значение яркости в окне
+	 * @param meanThreshold значение по умолчанию 50
+	 */
+	void setMeanThreshold(int meanThreshold);
 
 protected:
 	MotorPtr leftMotor;
