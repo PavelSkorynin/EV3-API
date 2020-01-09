@@ -3,7 +3,7 @@ ifdef OS
 	 COPY = copy
    FixPath = $(subst /,\,$1)
 	 MKDIR = @mkdir
-	 CROSS_COMPILE ?= C:/ev3/toolchain/bin/arm-ev3liga-linux-gnueabi-
+	 CROSS_COMPILE ?= ../toolchain/arm-ev3liga-linux-gnueabi-windows/bin/arm-ev3liga-linux-gnueabi-
 else
    RM = rm -rf
 	 COPY = cp -r

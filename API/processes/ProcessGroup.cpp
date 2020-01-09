@@ -14,8 +14,6 @@ ProcessGroup::ProcessGroup(bool completeIfAnyIsCompleted)
 
 void ProcessGroup::update(float secondsFromStart) {
 	Process::update(secondsFromStart);
-	group.insert(group.end(), processesToAdd.begin(), processesToAdd.end());
-	processesToAdd.clear();
 
 	for (auto it = group.begin(); it != group.end(); ) {
 		auto process = *it;
@@ -37,7 +35,7 @@ void ProcessGroup::update(float secondsFromStart) {
 }
 
 bool ProcessGroup::isCompleted() const {
-	return group.empty() && processesToAdd.empty();
+	return group.empty();
 }
 
 ProcessGroupOr::ProcessGroupOr() : ProcessGroup(false) {}

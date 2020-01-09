@@ -14,6 +14,10 @@
 #include <type_traits>
 
 namespace ev3 {
+
+class ProcessGroupOr;
+class ProcessGroupAnd;
+
 class ProcessGroup: public Process {
 public:
 	explicit ProcessGroup(bool completeIfAnyIsCompleted = false);
@@ -27,19 +31,94 @@ public:
 	virtual void update(float secondsFromStart) override;
 	virtual bool isCompleted() const override;
 
+protected:
 	template<class ProcessClass>
-	void addProcess(ProcessClass process) {
+	void addProcess(ProcessClass&& process) {
 		static_assert(std::is_base_of<Process, ProcessClass>::value);
-		processesToAdd.emplace_back(std::make_shared<ProcessClass>(std::move(process)));
+		group.emplace_back(std::make_shared<ProcessClass>(process));
+	}
+	template<class ProcessClass>
+	void addProcess(ProcessClass& process) {
+		static_assert(std::is_base_of<Process, ProcessClass>::value);
+		group.emplace_back(std::make_shared<ProcessClass>(process));
 	}
 	template<class ProcessClass>
 	void addProcess(std::shared_ptr<ProcessClass> process) {
 		static_assert(std::is_base_of<Process, ProcessClass>::value);
-		processesToAdd.emplace_back(process);
+		group.emplace_back(process);
 	}
+
+	template<class ProcessClassA, class ProcessClassB>
+	friend ProcessGroupOr operator|(ProcessClassA&& processA, ProcessClassB&& processB);
+
+	template<class ProcessClassA, class ProcessClassB>
+	friend ProcessGroupOr operator|(ProcessClassA& processA, ProcessClassB&& processB);
+
+	template<class ProcessClassA, class ProcessClassB>
+	friend ProcessGroupOr operator|(ProcessClassA& processA, ProcessClassB& processB);
+
+	template<class ProcessClassB>
+	friend ProcessGroupOr&& operator|(ProcessGroupOr&& processA, ProcessClassB&& processB);
+
+	template<class ProcessClassB>
+	friend ProcessGroupOr& operator|(ProcessGroupOr& processA, ProcessClassB&& processB);
+
+	template<class ProcessClassB>
+	friend ProcessGroupOr&& operator|(ProcessGroupOr&& processA, ProcessClassB& processB);
+
+	template<class ProcessClassB>
+	friend ProcessGroupOr& operator|(ProcessGroupOr& processA, ProcessClassB& processB);
+
+	template<class ProcessClassA>
+	friend ProcessGroupOr&& operator|(ProcessClassA&& processA, ProcessGroupOr&& processB);
+
+	template<class ProcessClassA>
+	friend ProcessGroupOr&& operator|(ProcessClassA& processA, ProcessGroupOr&& processB);
+
+	template<class ProcessClassA>
+	friend ProcessGroupOr& operator|(ProcessClassA&& processA, ProcessGroupOr& processB);
+
+	template<class ProcessClassA>
+	friend ProcessGroupOr& operator|(ProcessClassA& processA, ProcessGroupOr& processB);
+
+	template<class ProcessClassA, class ProcessClassB>
+	friend ProcessGroupAnd operator&(ProcessClassA&& processA, ProcessClassB&& processB);
+
+	template<class ProcessClassA, class ProcessClassB>
+	friend ProcessGroupAnd operator&(ProcessClassA&& processA, ProcessClassB& processB);
+
+	template<class ProcessClassA, class ProcessClassB>
+	friend ProcessGroupAnd operator&(ProcessClassA& processA, ProcessClassB&& processB);
+
+	template<class ProcessClassA, class ProcessClassB>
+	friend ProcessGroupAnd operator&(ProcessClassA& processA, ProcessClassB& processB);
+
+	template<class ProcessClassB>
+	friend ProcessGroupAnd&& operator&(ProcessGroupAnd&& processA, ProcessClassB&& processB);
+
+	template<class ProcessClassB>
+	friend ProcessGroupAnd& operator&(ProcessGroupAnd& processA, ProcessClassB&& processB);
+
+	template<class ProcessClassB>
+	friend ProcessGroupAnd&& operator&(ProcessGroupAnd&& processA, ProcessClassB& processB);
+
+	template<class ProcessClassB>
+	friend ProcessGroupAnd& operator&(ProcessGroupAnd& processA, ProcessClassB& processB);
+
+	template<class ProcessClassA>
+	friend ProcessGroup&& operator&(ProcessClassA&& processA, ProcessGroupAnd&& processB);
+
+	template<class ProcessClassA>
+	friend ProcessGroup&& operator&(ProcessClassA& processA, ProcessGroupAnd&& processB);
+
+	template<class ProcessClassA>
+	friend ProcessGroup& operator&(ProcessClassA&& processA, ProcessGroupAnd& processB);
+
+	template<class ProcessClassA>
+	friend ProcessGroup& operator&(ProcessClassA& processA, ProcessGroupAnd& processB);
+
 protected:
 	std::vector<std::shared_ptr<Process>> group;
-	std::vector<std::shared_ptr<Process>> processesToAdd;
 	bool completeIfAnyIsCompleted;
 };
 
