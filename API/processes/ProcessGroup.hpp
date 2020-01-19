@@ -18,15 +18,9 @@ namespace ev3 {
 class ProcessGroupOr;
 class ProcessGroupAnd;
 
-class ProcessGroup: public Process {
+class ProcessGroup: public virtual Process {
 public:
 	explicit ProcessGroup(bool completeIfAnyIsCompleted = false);
-	ProcessGroup(ProcessGroup&&) = default;
-	ProcessGroup(const ProcessGroup&) = default;
-	virtual ~ProcessGroup() = default;
-
-	ProcessGroup& operator=(const ProcessGroup&) = default;
-	ProcessGroup& operator=(ProcessGroup&&) = default;
 
 	virtual void update(float secondsFromStart) override;
 	virtual bool isCompleted() const override;
@@ -50,6 +44,9 @@ protected:
 
 	template<class ProcessClassA, class ProcessClassB>
 	friend ProcessGroupOr operator|(ProcessClassA&& processA, ProcessClassB&& processB);
+
+	template<class ProcessClassA, class ProcessClassB>
+	friend ProcessGroupOr operator|(ProcessClassA&& processA, ProcessClassB& processB);
 
 	template<class ProcessClassA, class ProcessClassB>
 	friend ProcessGroupOr operator|(ProcessClassA& processA, ProcessClassB&& processB);
@@ -122,7 +119,7 @@ protected:
 	bool completeIfAnyIsCompleted;
 };
 
-class ProcessGroupOr: public ProcessGroup {
+class ProcessGroupOr: public virtual ProcessGroup {
 public:
 	ProcessGroupOr();
 	ProcessGroupOr(ProcessGroupOr&&) = default;
@@ -130,10 +127,10 @@ public:
 	virtual ~ProcessGroupOr() = default;
 
 	ProcessGroupOr& operator=(const ProcessGroupOr&) = default;
-	ProcessGroupOr& operator=(ProcessGroupOr&&) = default;
+	ProcessGroupOr& operator=(ProcessGroupOr&&);
 };
 
-class ProcessGroupAnd: public ProcessGroup {
+class ProcessGroupAnd: public virtual ProcessGroup {
 public:
 	ProcessGroupAnd();
 	ProcessGroupAnd(ProcessGroupAnd&&) = default;
@@ -141,7 +138,7 @@ public:
 	virtual ~ProcessGroupAnd() = default;
 
 	ProcessGroupAnd& operator=(const ProcessGroupAnd&) = default;
-	ProcessGroupAnd& operator=(ProcessGroupAnd&&) = default;
+	ProcessGroupAnd& operator=(ProcessGroupAnd&&);
 };
 
 template<class ProcessClassA, class ProcessClassB>

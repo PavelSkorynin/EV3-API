@@ -18,7 +18,7 @@ void ProcessSequence::update(float secondsFromStart) {
  		front->update(secondsFromStart);
  		if (front->isCompleted()) {
  			front->onCompleted(secondsFromStart);
- 			sequence.pop_front();
+ 			sequence.pop();
  		} else {
  			break;
  		}

@@ -14,14 +14,9 @@
 
 namespace ev3 {
 
-const int BLACK_COLOR = -1;
-const int WHITE_COLOR = -2;
-const int NO_COLOR = -3;
-
-class GetColorProcess : public Process {
+class GetColorProcess : public virtual Process {
 public:
 	GetColorProcess(const std::shared_ptr<ColorSensor> &colorSensor, std::vector<int> colors, float duration = 0.1f);
-	virtual ~GetColorProcess() = default;
 
 	virtual void onCompleted(float secondsFromStart) override;
 	virtual void update(float secondsFromStart) override;

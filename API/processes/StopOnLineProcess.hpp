@@ -15,12 +15,11 @@
 
 namespace ev3 {
 
-class StopOnLineProcess: public Process {
+class StopOnLineProcess: public virtual Process {
 public:
 	StopOnLineProcess(MotorPtr leftMotor, MotorPtr rightMotor,
 			SensorPtr leftLight, SensorPtr rightLight,
 			int encoderDistance, int maxPower = 70);
-	virtual ~StopOnLineProcess() = default;
 
 	virtual void update(float secondsFromStart) override;
 	virtual void onStarted(float secondsFromStart) override;

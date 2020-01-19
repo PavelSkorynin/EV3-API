@@ -11,10 +11,9 @@
 
 namespace ev3 {
 
-class WaitTimeProcess: public TimeProcess {
+class WaitTimeProcess: public virtual TimeProcess {
 public:
 	explicit WaitTimeProcess(float secondsToWait);
-	virtual ~WaitTimeProcess() = default;
 };
 
 }

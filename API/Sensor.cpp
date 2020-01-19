@@ -178,6 +178,36 @@ Wire<HSV> ColorSensor::getHSVColorWire() const {
 	});
 }
 
+int ColorSensor::getColorIndex(const std::vector<int> &colors, int blackVThreshold, int whiteSThreshold, int whiteVThreshold) const {
+	auto hsv = getHSVColor();
+
+	if (hsv.h == 0 && hsv.s == 0 && hsv.v == 0) {
+		return NO_COLOR;
+	} else if (hsv.v < blackVThreshold) {
+		return BLACK_COLOR;
+	} else if (hsv.s < whiteSThreshold && hsv.v > whiteVThreshold) {
+		return WHITE_COLOR;
+	}
+
+	int minDistance = 1000;
+	int colorIndex = 0;
+	for (auto color : colors) {
+		// ищем, к какому цвету ближе всего увиденный
+		// находим минимальное расстояние от h до цвета на циклической шкале
+		int dist1 = abs(hsv.h - color);
+		int dist2 = abs(hsv.h - color + 360);
+		int dist3 = abs(hsv.h - color - 360);
+		int minDist = std::min(dist1, std::min(dist2, dist3));
+		if (minDist < minDistance) {
+			colorIndex = color;
+			minDistance = minDist;
+		}
+	}
+
+	return colorIndex;
+}
+
+
 void ColorSensor::setMinRValue(unsigned char minValue) {
 	minColor.r = minValue;
 }

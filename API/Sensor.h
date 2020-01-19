@@ -207,6 +207,12 @@ HSV rgbToHsv(const RGB &rgb);
  */
 RGB hsvToRgb(const HSV &hsv);
 
+
+const int BLACK_COLOR = -1;
+const int WHITE_COLOR = -2;
+const int NO_COLOR = -3;
+
+
 /**
  * Датчик цвета. Возвращает цвет в двух форматах: RGB и HSV
  */
@@ -239,6 +245,19 @@ public:
 	 * @return цвет
 	 */
 	Wire<HSV> getHSVColorWire() const;
+
+
+	/**
+	 * Ищет наиболее подходящий цвет из массиве или три предопределённых цвета: чёрный, белый, нет цвета.
+	 * @param colors значения Hue цветов
+	 * @param blackVThreshold Пороговые значения для чёрного цвета. Чёрным считается цвет, у которого компонента V меньше заданного значения
+	 * @param whiteSThreshold Пороговые значения для белого цвета. Белым считается цвет, у которого компонента S меньше заданного значения и
+	 * V больше определённого значения
+	 * @param whiteVThreshold Пороговые значения для белого цвета. Белым считается цвет, у которого компонента S меньше заданного значения и
+	 * V больше определённого значения
+	 * @return индекс в исходном массиве или -1 для чёрного, -2 для белого, -3 - нет цвета
+	 */
+	inline int getColorIndex(const std::vector<int> &colors, int blackVThreshold = 10, int whiteSThreshold = 20, int whiteVThreshold = 60) const;
 
 	/**
 	 * Минимальное исходное значение компоненты R на датчике

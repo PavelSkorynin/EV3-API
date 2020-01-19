@@ -15,10 +15,9 @@
 
 namespace ev3 {
 
-class WaitNoColorProcess: public Process {
+class WaitNoColorProcess: public virtual Process {
 public:
 	explicit WaitNoColorProcess(const std::shared_ptr<ColorSensor> &colorSensor);
-	virtual ~WaitNoColorProcess() = default;
 
 	virtual bool isCompleted() const;
 	virtual void update(float secondsFromStart) override;

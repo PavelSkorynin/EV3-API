@@ -32,33 +32,15 @@ public:
 	 * Конструктор от фиксированного значения. getValue всегда будет возвращать это значение.
 	 * @param value фиксированное значение
 	 */
-	Wire(const T & value)
+	explicit Wire(const T & value)
 		: provider([value]() -> T { return value; })
-	{
-	}
-
-	/**
-	 * Конструктор копирования. Провод будет использовать ту же функцию, что и копируемый объект.
-	 * @param w провод для копирования
-	 */
-	Wire(const Wire<T> & w)
-		: provider(w.provider)
-	{
-	}
-
-	/**
-	 * Конструктор копирования. Провод будет использовать ту же функцию, что и копируемый объект.
-	 * @p
-	 */
-	Wire(Wire<T> && w)
-		: provider(w.provider)
 	{
 	}
 
 	/**
 	 * Конструктор копирования с приведением типов.
 	 * Провод будет использовать ту же функцию, что и копируемый объект.
-	 * @p
+	 * @param w провод для копирования
 	 */
 	template<typename V>
 	Wire(const Wire<V> & w)
@@ -66,11 +48,12 @@ public:
 	{
 	}
 
-	Wire<T> & operator= (const Wire<T> & w)
+	Wire<T> & operator= (const T & v)
 	{
-		provider = [w] { return (T)w.getValue(); };
+		provider = [v] { return v; };
 		return *this;
 	}
+
 
 	/**
 	 * Возвращает текущее значение на проводе

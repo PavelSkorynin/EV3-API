@@ -12,10 +12,9 @@
 
 namespace ev3 {
 
-class StopProcess: public Process {
+class StopProcess: public virtual Process {
 public:
 	explicit StopProcess(const MotorPtr &motor);
-	virtual ~StopProcess() = default;
 
 	virtual void onStarted(float secondsFromStart) override;
 	virtual bool isCompleted() const;

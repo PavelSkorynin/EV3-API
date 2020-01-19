@@ -10,15 +10,15 @@
 
 namespace ev3 {
 
-MoveOnLineProcess::MoveOnLineProcess(MotorPtr leftMotor_,
-		MotorPtr rightMotor_, SensorPtr leftLight_,
-		SensorPtr rightLight_, int encoderDistance_, int maxPower_)
-	: leftMotor(leftMotor_)
-	, rightMotor(rightMotor_)
-	, leftLight(leftLight_)
-	, rightLight(rightLight_)
-	, encoderDistance(encoderDistance_)
-	, maxPower(maxPower_)
+MoveOnLineProcess::MoveOnLineProcess(MotorPtr leftMotor,
+		MotorPtr rightMotor, SensorPtr leftLight,
+		SensorPtr rightLight, int encoderDistance, int maxPower)
+	: leftMotor(leftMotor)
+	, rightMotor(rightMotor)
+	, leftLight(leftLight)
+	, rightLight(rightLight)
+	, encoderDistance(encoderDistance)
+	, maxPower(maxPower)
 	, pd(0.3f, 0, 0.9f) {
 }
 
@@ -43,7 +43,7 @@ void MoveOnLineProcess::onStarted(float secondsFromStart) {
 	}));
 	rightMotor->setPower(std::function<int()>([&] () -> int {
 		auto delta = clamp<float>(maxPower * pd.getPower() / 50.0f, -abs(maxPower), abs(maxPower));
-		if (pd.getPower() < 0) {
+		if (delta < 0) {
 			return maxPower + delta;
 		}
 		return maxPower;

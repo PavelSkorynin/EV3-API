@@ -15,11 +15,10 @@
 
 namespace ev3 {
 
-class StopByEncoderOnArcProcess: public Process {
+class StopByEncoderOnArcProcess: public virtual Process {
 public:
 	StopByEncoderOnArcProcess(MotorPtr leftMotor_, MotorPtr rightMotor_,
 			int leftEncoderDistance_, int rightEncoderDistance_, int maxPower_);
-	virtual ~StopByEncoderOnArcProcess() = default;
 
 	virtual void update(float secondsFromStart) override;
 	virtual void onStarted(float secondsFromStart) override;

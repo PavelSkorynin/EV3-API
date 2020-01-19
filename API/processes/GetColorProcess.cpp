@@ -23,6 +23,24 @@ GetColorProcess::GetColorProcess(const std::shared_ptr<ColorSensor> &colorSensor
 
 }
 
+void GetColorProcess::onStarted(float secondsFromStart) {
+	Process::onStarted(secondsFromStart);
+	modes.clear();
+	modes.resize(colors.size() + 3, 0);
+	startTimestamp = secondsFromStart;
+}
+
+void GetColorProcess::update(float secondsFromStart) {
+	Process::update(secondsFromStart);
+
+	auto colorIndex = colorSensor->getColorIndex(colors, blackVThreshold, whiteSThreshold, whiteVThreshold);
+	if (colorIndex < 0) {
+		colorIndex = colors.size() - 1 - NO_COLOR;
+	}
+	modes[colorIndex]++;
+	completed = (secondsFromStart - startTimestamp >= duration);
+}
+
 void GetColorProcess::onCompleted(float secondsFromStart) {
 	Process::onCompleted(secondsFromStart);
 	// среди найденных цветов ищем наиболее встречаемый
@@ -37,46 +55,6 @@ void GetColorProcess::onCompleted(float secondsFromStart) {
 	if (detectedColor >= (int)colors.size()) {
 		detectedColor = (int)colors.size() - 1 - detectedColor;
 	}
-}
-
-void GetColorProcess::update(float secondsFromStart) {
-	Process::update(secondsFromStart);
-
-	auto hsv = colorSensor->getHSVColor();
-
-	if (hsv.h == 0 && hsv.s == 0 && hsv.v == 0) {
-		modes[colors.size() - 1 - NO_COLOR]++;
-	} else if (hsv.v < blackVThreshold) {
-		modes[colors.size() - 1 - BLACK_COLOR]++;
-	} else if (hsv.s < whiteSThreshold && hsv.v > whiteVThreshold) {
-		modes[colors.size() - 1 - WHITE_COLOR]++;
-	} else {
-		int minDistance = 1000;
-		int colorIndex = 0;
-		for (auto color : colors) {
-			// ищем, к какому цвету ближе всего увиденный
-			// находим минимальное расстояние от h до цвета на циклической шкале
-			int dist1 = abs(hsv.h - color);
-			int dist2 = abs(hsv.h - color + 360);
-			int dist3 = abs(hsv.h - color - 360);
-			int minDist = std::min(dist1, std::min(dist2, dist3));
-			if (minDist < minDistance) {
-				colorIndex = color;
-				minDistance = minDist;
-			}
-		}
-
-		modes[colorIndex]++;
-	}
-
-	completed = secondsFromStart - startTimestamp >= duration;
-}
-
-void GetColorProcess::onStarted(float secondsFromStart) {
-	Process::onStarted(secondsFromStart);
-	modes.clear();
-	modes.resize(colors.size() + 3, 0);
-	startTimestamp = secondsFromStart;
 }
 
 bool GetColorProcess::isCompleted() const {

@@ -9,19 +9,13 @@
 #define PROCESSSEQUENCE_H_
 
 #include "Process.h"
-#include <deque>
+#include <queue>
 #include <memory>
 
 namespace ev3 {
-class ProcessSequence: public Process {
+class ProcessSequence: public virtual Process {
 public:
 	ProcessSequence();
-	ProcessSequence(ProcessSequence &&) = default;
-	ProcessSequence(const ProcessSequence &) = default;
-	virtual ~ProcessSequence() = default;
-
-	ProcessSequence& operator=(const ProcessSequence&) = default;
-	ProcessSequence& operator=(ProcessSequence&&) = default;
 
 	virtual void update(float secondsFromStart) override;
 	virtual bool isCompleted() const override;
@@ -43,21 +37,21 @@ public:
 	template<class ProcessClass>
 	void addProcess(ProcessClass &&process) {
 		static_assert(std::is_base_of<Process, ProcessClass>::value);
-		sequence.emplace_back(std::make_shared<ProcessClass>(process));
+		sequence.emplace(std::make_shared<ProcessClass>(process));
 	}
 	template<class ProcessClass>
 	void addProcess(ProcessClass &process) {
 		static_assert(std::is_base_of<Process, ProcessClass>::value);
-		sequence.emplace_back(std::make_shared<ProcessClass>(process));
+		sequence.emplace(std::make_shared<ProcessClass>(process));
 	}
 	template<class ProcessClass>
 	void addProcess(std::shared_ptr<ProcessClass> process) {
 		static_assert(std::is_base_of<Process, ProcessClass>::value);
-		sequence.emplace_back(process);
+		sequence.emplace(process);
 	}
 
 protected:
-	std::deque<std::shared_ptr<Process>> sequence;
+	std::queue<std::shared_ptr<Process>> sequence;
 };
 
 template<class ProcessClassA, class ProcessClassB>

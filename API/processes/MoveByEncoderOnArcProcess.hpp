@@ -14,10 +14,9 @@
 
 namespace ev3 {
 
-class MoveByEncoderOnArcProcess: public Process {
+class MoveByEncoderOnArcProcess: public virtual Process {
 public:
 	MoveByEncoderOnArcProcess(MotorPtr leftMotor, MotorPtr rightMotor, int leftEncoderDistance, int rightEncoderDistance, int maxPower = 70);
-	virtual ~MoveByEncoderOnArcProcess() = default;
 
 	virtual void update(float secondsFromStart) override;
 	virtual void onStarted(float secondsFromStart) override;

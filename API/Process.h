@@ -18,12 +18,6 @@ namespace ev3 {
 		bool isStarted;
 	public:
 		Process() : isStarted(false) {}
-		Process(Process &&) = default;
-		Process(const Process &) = default;
-
-		Process& operator=(const Process&) = default;
-		Process& operator=(Process&&) = default;
-
 		virtual ~Process() = default;
 
 		/**
@@ -51,7 +45,7 @@ namespace ev3 {
 		virtual bool isCompleted() const = 0;
 	};
 
-	class LambdaProcess : public Process {
+	class LambdaProcess : public virtual Process {
 	public:
 		LambdaProcess(const std::function<bool(float)> &updateFunc);
 		LambdaProcess(const std::function<bool(float)> &updateFunc, const std::function<void(float)> &onCompletedFunc);
@@ -66,7 +60,7 @@ namespace ev3 {
 		bool completed;
 	};
 
-	class TimeProcess : public Process {
+	class TimeProcess : public virtual Process {
 	public:
 		TimeProcess(const std::function<void(float)> &updateFunc, float duration, float delay = 0.0f);
 		TimeProcess(const std::function<void(float)> &updateFunc, const std::function<void(float)> &onCompletedFunc, float duration, float delay = 0.0f);

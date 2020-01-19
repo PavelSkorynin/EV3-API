@@ -27,8 +27,7 @@ public:
 	 * @param kd коэффициент дифференциальной составляющей
 	 * @param isCompleted функция, которая определяет, когда необходимо завершить процесс ПИД-регулирования
 	 */
-	PID(float kp = 0.4f, float ki = 0.00001f, float kd = 1.2f, std::function<bool()> isCompleted = [] () -> bool { return false; });
-	~PID();
+	explicit PID(float kp = 0.4f, float ki = 0.00001f, float kd = 1.2f);
 
 	/**
 	 * Установка ошибки, передаваемой в ПД-регулятор
@@ -40,11 +39,6 @@ public:
 	 * @return текущее воздействие
 	 */
 	float getPower() const;
-	/**
-	 * Возвращает мощность выходного компенсирующего сигнала с учётом ошибки и параметров.
-	 * @return поток данных
-	 */
-	WireF getPowerWire() const;
 
 	/**
 	 * Обновление выходной мощности
@@ -75,9 +69,7 @@ protected:
 	float lastUpdateTime;
 	float power;
 
-	std::function<bool()> isCompletedFunc;
-	std::shared_ptr<WireF> errorWire;
-	WireF powerWire;
+	WireF errorWire;
 };
 
 } /* namespace ev3 */

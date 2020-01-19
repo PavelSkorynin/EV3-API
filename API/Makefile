@@ -23,8 +23,8 @@ CPP_SRCS = $(wildcard *.cpp) $(wildcard processes/*.cpp)
 CPP_INCLUDE = $(patsubst %,out/include/%,$(wildcard *.h)) $(patsubst %,out/include/%,$(wildcard processes/*.hpp))
 CPP_OBJS = $(patsubst %,out/obj/%.o,$(CPP_SRCS))
 CFLAGS += -fno-strict-aliasing
-CFLAGS += -Wall -Wextra -Wpointer-sign -Wno-unused-parameter
-CXXFLAGS += -fno-strict-aliasing --std=c++17 -Wall -O3
+CFLAGS += -Wall -Wextra -Wpointer-sign -Wno-unused-parameter -O4
+CXXFLAGS += -fno-strict-aliasing --std=c++17 -Wall -O4
 
 .DEFAULT: all
 all: out/lib/libev3apicore.a out/lib/libev3api.a
@@ -38,11 +38,11 @@ out/lib/libev3api.a: $(CORE_OBJS) $(CPP_OBJS) $(CORE_INCLUDE) $(CPP_INCLUDE)
 
 out/obj/core/%.o: core/%
 	$(MKDIR) $(call FixPath,$(@D)) || @echo
-	$(CC) -Os $(CFLAGS) -isystem. -o $@ -c $<
+	$(CC) $(CFLAGS) -isystem. -o $@ -c $<
 
 out/obj/%.o: %
 	$(MKDIR) $(call FixPath,$(@D)) || @echo
-	$(CXX) -Os $(CXXFLAGS) -isystem. -o $@ -c $<
+	$(CXX) $(CXXFLAGS) -isystem. -o $@ -c $<
 	
 out/include/%.h: %.h
 	$(MKDIR) $(call FixPath,$(@D)) || @echo

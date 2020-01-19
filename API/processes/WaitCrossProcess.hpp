@@ -13,10 +13,9 @@
 
 namespace ev3 {
 
-class WaitCrossProcess: public Process {
+class WaitCrossProcess: public virtual Process {
 public:
 	WaitCrossProcess(MotorPtr leftMotor, MotorPtr rightMotor, SensorPtr leftLight, SensorPtr rightLight);
-	virtual ~WaitCrossProcess() = default;
 
 	virtual void update(float secondsFromStart) override;
 	virtual void onStarted(float secondsFromStart) override;

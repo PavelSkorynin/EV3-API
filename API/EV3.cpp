@@ -122,12 +122,12 @@ namespace ev3 {
 	}
 
 
-	std::shared_ptr<FakeSensor> getFakeSensor(const ev3::WireI &valueInput) {
+	std::shared_ptr<FakeSensor> EV3::getFakeSensor(const ev3::WireI &valueInput) {
 		return std::make_shared<FakeSensor>(valueInput);
 	}
 
 
-	std::shared_ptr<FakeSensor> getFakeSensor(int value) {
+	std::shared_ptr<FakeSensor> EV3::getFakeSensor(int value) {
 		return std::make_shared<FakeSensor>(value);
 	}
 

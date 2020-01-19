@@ -24,6 +24,7 @@ WaitCrossProcess::WaitCrossProcess(MotorPtr leftMotor, MotorPtr rightMotor, Sens
 }
 
 void WaitCrossProcess::onStarted(float secondsFromStart) {
+	Process::onStarted(secondsFromStart);
 	// инициализация окна с данными датчиков
 	prevLeftEncoder = leftMotor->getEncoder();
 	prevRightEncoder = rightMotor->getEncoder();
@@ -34,6 +35,7 @@ void WaitCrossProcess::onStarted(float secondsFromStart) {
 }
 
 void WaitCrossProcess::update(float secondsFromStart) {
+	Process::update(secondsFromStart);
 	foundCross = checkSensor(leftLight, leftMotor, leftLightValues, prevLeftEncoder) ||
 			checkSensor(rightLight, rightMotor, rightLightValues, prevRightEncoder);
 }
