@@ -55,7 +55,8 @@ void MoveOnLineProcess::update(float secondsFromStart) {
 	pd.update(secondsFromStart);
 }
 
-bool MoveOnLineProcess::isCompleted() const {
+bool MoveOnLineProcess::isCompleted(float secondsFromStart) {
+	Process::isCompleted(secondsFromStart);
 	// останавливаемся, когда среднее значение на енкодерах достигло желаемого
 	return (leftMotor->getEncoder() + rightMotor->getEncoder()) >= encoderDistance * 2;
 }

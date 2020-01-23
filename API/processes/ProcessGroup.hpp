@@ -23,7 +23,7 @@ public:
 	explicit ProcessGroup(bool completeIfAnyIsCompleted = false);
 
 	virtual void update(float secondsFromStart) override;
-	virtual bool isCompleted() const override;
+	virtual bool isCompleted(float secondsFromStart) override;
 
 protected:
 	template<class ProcessClass>

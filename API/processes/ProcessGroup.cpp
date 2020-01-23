@@ -17,8 +17,7 @@ void ProcessGroup::update(float secondsFromStart) {
 
 	for (auto it = group.begin(); it != group.end(); ) {
 		auto process = *it;
-		process->update(secondsFromStart);
- 		if (process->isCompleted()) {
+ 		if (process->isCompleted(secondsFromStart)) {
  			if (completeIfAnyIsCompleted) {
  				for (const auto &process : group) {
  					process->onCompleted(secondsFromStart);
@@ -29,12 +28,14 @@ void ProcessGroup::update(float secondsFromStart) {
  			process->onCompleted(secondsFromStart);
  			it = group.erase(it);
  		} else {
+ 			process->update(secondsFromStart);
  			++it;
  		}
 	}
 }
 
-bool ProcessGroup::isCompleted() const {
+bool ProcessGroup::isCompleted(float secondsFromStart) {
+	Process::isCompleted(secondsFromStart);
 	return group.empty();
 }
 

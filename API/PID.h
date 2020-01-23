@@ -50,7 +50,7 @@ public:
 	 * Признак завершённости процесса
 	 * @return возвращает результат функции isCompleted, переданной в конструктор
 	 */
-	bool isCompleted() const;
+	bool isCompleted(float secondsFromStart) override;
 
 	/**
 	 * Установить коэффициенты ПИД-регулятора

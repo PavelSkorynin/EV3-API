@@ -16,10 +16,7 @@ GetColorProcess::GetColorProcess(const std::shared_ptr<ColorSensor> &colorSensor
 	, modes()
 	, startTimestamp(0)
 	, detectedColor(NO_COLOR)
-	, completed(false)
-	, blackVThreshold(10)
-	, whiteSThreshold(20)
-	, whiteVThreshold(60) {
+	, completed(false) {
 
 }
 
@@ -57,7 +54,8 @@ void GetColorProcess::onCompleted(float secondsFromStart) {
 	}
 }
 
-bool GetColorProcess::isCompleted() const {
+bool GetColorProcess::isCompleted(float secondsFromStart) {
+	Process::isCompleted(secondsFromStart);
 	return completed;
 }
 

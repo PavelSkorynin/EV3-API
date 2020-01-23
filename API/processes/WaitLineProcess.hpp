@@ -16,7 +16,7 @@ class WaitLineProcess: public virtual Process {
 public:
 	explicit WaitLineProcess(const SensorPtr &lightSensor);
 
-	virtual bool isCompleted() const;
+	virtual bool isCompleted(float secondsFromStart) override;
 
 	/**
 	 * Установить порог яркости, при котором завершится процесс

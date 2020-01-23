@@ -40,7 +40,8 @@ void WaitCrossProcess::update(float secondsFromStart) {
 			checkSensor(rightLight, rightMotor, rightLightValues, prevRightEncoder);
 }
 
-bool WaitCrossProcess::isCompleted() const {
+bool WaitCrossProcess::isCompleted(float secondsFromStart) {
+	Process::isCompleted(secondsFromStart);
 	return foundCross;
 }
 

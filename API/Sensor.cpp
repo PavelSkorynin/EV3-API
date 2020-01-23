@@ -191,15 +191,16 @@ int ColorSensor::getColorIndex(const std::vector<int> &colors, int blackVThresho
 
 	int minDistance = 1000;
 	int colorIndex = 0;
-	for (auto color : colors) {
+	for (size_t index = 0; index < colors.size(); ++index) {
 		// ищем, к какому цвету ближе всего увиденный
 		// находим минимальное расстояние от h до цвета на циклической шкале
+		auto color = colors[index];
 		int dist1 = abs(hsv.h - color);
 		int dist2 = abs(hsv.h - color + 360);
 		int dist3 = abs(hsv.h - color - 360);
 		int minDist = std::min(dist1, std::min(dist2, dist3));
 		if (minDist < minDistance) {
-			colorIndex = color;
+			colorIndex = index;
 			minDistance = minDist;
 		}
 	}

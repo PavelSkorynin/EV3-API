@@ -52,7 +52,8 @@ void StopOnLineProcess::update(float secondsFromStart) {
 	moveOnLineProcess->update(secondsFromStart);
 }
 
-bool StopOnLineProcess::isCompleted() const {
+bool StopOnLineProcess::isCompleted(float secondsFromStart) {
+	Process::isCompleted(secondsFromStart);
 	return powerPD.getPower() < powerThreshold && abs(leftMotor->getActualSpeed()) < speedThreshold && abs(rightMotor->getActualSpeed()) < speedThreshold;
 }
 

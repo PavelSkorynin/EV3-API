@@ -33,7 +33,8 @@ void WaitNoColorProcess::update(float secondsFromStart) {
 	foundNoColor = (secondsFromStart - lastColorTimestamp >= timeout);
 }
 
-bool WaitNoColorProcess::isCompleted() const {
+bool WaitNoColorProcess::isCompleted(float secondsFromStart) {
+	Process::isCompleted(secondsFromStart);
 	return foundNoColor;
 }
 

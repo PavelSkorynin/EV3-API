@@ -17,7 +17,7 @@ public:
 	explicit StopProcess(const MotorPtr &motor);
 
 	virtual void onStarted(float secondsFromStart) override;
-	virtual bool isCompleted() const;
+	virtual bool isCompleted(float secondsFromStart) override;
 
 	/**
 	 * Установить скорость на моторе (actual speed), при которой завершается процесс

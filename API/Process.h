@@ -42,7 +42,7 @@ namespace ev3 {
 		 * Признак завершённости процесса
 		 * @return true, если процесс завершён и больше вызывать update не имеет смысла
 		 */
-		virtual bool isCompleted() const = 0;
+		virtual bool isCompleted(float secondsFromStart);
 	};
 
 	class LambdaProcess : public virtual Process {
@@ -52,7 +52,7 @@ namespace ev3 {
 
 		virtual void update(float secondsFromStart) override;
 		virtual void onCompleted(float secondsFromStart) override;
-		virtual bool isCompleted() const override;
+		virtual bool isCompleted(float secondsFromStart) override;
 
 	protected:
 		std::function<bool(float)> updateFunc;
@@ -68,7 +68,7 @@ namespace ev3 {
 		virtual void onStarted(float secondsFromStart) override;
 		virtual void update(float secondsFromStart) override;
 		virtual void onCompleted(float secondsFromStart) override;
-		virtual bool isCompleted() const override;
+		virtual bool isCompleted(float secondsFromStart) override;
 
 	protected:
 		std::function<void(float)> updateFunc;

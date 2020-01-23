@@ -19,7 +19,7 @@ class WaitNoColorProcess: public virtual Process {
 public:
 	explicit WaitNoColorProcess(const std::shared_ptr<ColorSensor> &colorSensor);
 
-	virtual bool isCompleted() const;
+	virtual bool isCompleted(float secondsFromStart) override;
 	virtual void update(float secondsFromStart) override;
 	virtual void onStarted(float secondsFromStart) override;
 

@@ -24,6 +24,14 @@ void Process::onCompleted(float secondsFromStart) {
 
 }
 
+bool Process::isCompleted(float secondsFromStart) {
+	if (!isStarted) {
+		onStarted(secondsFromStart);
+		isStarted = true;
+	}
+	return false;
+}
+
 LambdaProcess::LambdaProcess(const std::function<bool(float)> &updateFunc)
 	: updateFunc(updateFunc)
 	, onCompletedFunc([](float){})
@@ -54,7 +62,8 @@ void LambdaProcess::onCompleted(float secondsFromStart) {
 	onCompletedFunc(secondsFromStart);
 }
 
-bool LambdaProcess::isCompleted() const {
+bool LambdaProcess::isCompleted(float secondsFromStart) {
+	Process::isCompleted(secondsFromStart);
 	return completed;
 }
 
@@ -103,7 +112,8 @@ void TimeProcess::onCompleted(float secondsFromStart) {
 	onCompletedFunc(secondsFromStart);
 }
 
-bool TimeProcess::isCompleted() const {
+bool TimeProcess::isCompleted(float secondsFromStart) {
+	Process::isCompleted(secondsFromStart);
 	return completed;
 }
 

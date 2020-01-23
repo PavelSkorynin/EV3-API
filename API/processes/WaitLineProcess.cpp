@@ -15,7 +15,8 @@ WaitLineProcess::WaitLineProcess(const SensorPtr &lightSensor)
 
 }
 
-bool WaitLineProcess::isCompleted() const {
+bool WaitLineProcess::isCompleted(float secondsFromStart) {
+	Process::isCompleted(secondsFromStart);
 	return lightSensor->getValue() < threshold;
 }
 

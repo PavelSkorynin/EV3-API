@@ -19,7 +19,7 @@ public:
 
 	virtual void update(float secondsFromStart) override;
 	virtual void onStarted(float secondsFromStart) override;
-	virtual bool isCompleted() const;
+	virtual bool isCompleted(float secondsFromStart) override;
 
 	/**
 	 * Установить разницу показаний между текущей яркостью и яркостью в начале окна, при которой завершается процесс

@@ -23,7 +23,7 @@ public:
 	virtual void update(float secondsFromStart) override;
 	virtual void onStarted(float secondsFromStart) override;
 	virtual void onCompleted(float secondsFromStart) override;
-	virtual bool isCompleted() const;
+	virtual bool isCompleted(float secondsFromStart) override;
 
 	/**
 	 * Установить коэффициенты ПИД-регулятора для движения по енкодеру

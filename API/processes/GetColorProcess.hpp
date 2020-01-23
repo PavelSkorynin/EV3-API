@@ -21,7 +21,7 @@ public:
 	virtual void onCompleted(float secondsFromStart) override;
 	virtual void update(float secondsFromStart) override;
 	virtual void onStarted(float secondsFromStart) override;
-	virtual bool isCompleted() const;
+	virtual bool isCompleted(float secondsFromStart) override;
 
 	/**
 	 * Возвращает наиболее встречаемый цвет. Значения >= 0 соответствуют индексам в массиве colors, переданном в кострукторе
@@ -57,10 +57,9 @@ protected:
 	int detectedColor;
 	bool completed;
 
-	unsigned char blackVThreshold;
-	unsigned char whiteSThreshold;
-	unsigned char whiteVThreshold;
-
+	unsigned char blackVThreshold = 10;
+	unsigned char whiteSThreshold = 20;
+	unsigned char whiteVThreshold = 60;
 };
 
 }

@@ -257,7 +257,7 @@ public:
 	 * V больше определённого значения
 	 * @return индекс в исходном массиве или -1 для чёрного, -2 для белого, -3 - нет цвета
 	 */
-	inline int getColorIndex(const std::vector<int> &colors, int blackVThreshold = 10, int whiteSThreshold = 20, int whiteVThreshold = 60) const;
+	int getColorIndex(const std::vector<int> &colors, int blackVThreshold = 10, int whiteSThreshold = 20, int whiteVThreshold = 60) const;
 
 	/**
 	 * Минимальное исходное значение компоненты R на датчике

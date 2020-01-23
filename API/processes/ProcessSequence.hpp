@@ -18,7 +18,7 @@ public:
 	ProcessSequence();
 
 	virtual void update(float secondsFromStart) override;
-	virtual bool isCompleted() const override;
+	virtual bool isCompleted(float secondsFromStart) override;
 
 	template<class ProcessClassA>
 	ProcessSequence& operator>>=(ProcessClassA &&processA) {

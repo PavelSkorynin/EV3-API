@@ -46,7 +46,8 @@ void PID::update(float secondsFromStart) {
 	}
 }
 
-bool PID::isCompleted() const {
+bool PID::isCompleted(float secondsFromStart) {
+	Process::isCompleted(secondsFromStart);
 	return false;
 }
 

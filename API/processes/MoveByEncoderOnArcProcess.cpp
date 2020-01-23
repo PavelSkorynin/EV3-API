@@ -88,7 +88,8 @@ void MoveByEncoderOnArcProcess::update(float secondsFromStart) {
 	pd.update(secondsFromStart);
 }
 
-bool MoveByEncoderOnArcProcess::isCompleted() const {
+bool MoveByEncoderOnArcProcess::isCompleted(float secondsFromStart) {
+	Process::isCompleted(secondsFromStart);
 	if (leftEncoderDistance > rightEncoderDistance) {
 		return leftMotor->getEncoder() >= leftEncoderDistance;
 	}

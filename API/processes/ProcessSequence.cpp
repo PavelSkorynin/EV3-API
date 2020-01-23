@@ -15,17 +15,18 @@ void ProcessSequence::update(float secondsFromStart) {
 	Process::update(secondsFromStart);
  	while (!sequence.empty()) {
  		auto& front = sequence.front();
- 		front->update(secondsFromStart);
- 		if (front->isCompleted()) {
+ 		if (front->isCompleted(secondsFromStart)) {
  			front->onCompleted(secondsFromStart);
  			sequence.pop();
  		} else {
+ 	 		front->update(secondsFromStart);
  			break;
  		}
  	}
 }
 
-bool ProcessSequence::isCompleted() const {
+bool ProcessSequence::isCompleted(float secondsFromStart) {
+	Process::isCompleted(secondsFromStart);
 	return sequence.empty();
 }
 

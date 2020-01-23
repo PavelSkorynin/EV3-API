@@ -49,7 +49,8 @@ void StopByEncoderOnArcProcess::update(float secondsFromStart) {
 	moveByEncoderOnArcProcess->update(secondsFromStart);
 }
 
-bool StopByEncoderOnArcProcess::isCompleted() const {
+bool StopByEncoderOnArcProcess::isCompleted(float secondsFromStart) {
+	Process::isCompleted(secondsFromStart);
 	return powerPD.getPower() < powerThreshold && abs(leftMotor->getActualSpeed()) < speedThreshold && abs(rightMotor->getActualSpeed()) < speedThreshold;
 }
 
