@@ -152,6 +152,11 @@ enum class LEDPattern : uint8_t {
 			return LcdPrintf((char)color, format, args...);
 		}
 		/**
+		 * Очистка экрана
+		 * @return true в случае успешной очистки
+		 */
+		bool lcdClean();
+		/**
 		 * Воспроизводит звук определённой частоты. Не дожидается окончания
 		 * @param frequency частота звука
 		 * @param duration длительность звука в секундах
@@ -177,7 +182,7 @@ enum class LEDPattern : uint8_t {
 		void runProcess(ProcessClass *process) {
 			static_assert(std::is_base_of<Process, ProcessClass>::value);
 			float timestamp = this->timestamp();;
-			while (!process->isCompleted()) {
+			while (!process->isCompleted(timestamp)) {
 				timestamp = this->timestamp();
 				updateInputs(timestamp);
 				process->update(timestamp);
@@ -196,7 +201,7 @@ enum class LEDPattern : uint8_t {
 		void runProcess(std::shared_ptr<ProcessClass> process) {
 			static_assert(std::is_base_of<Process, ProcessClass>::value);
 			float timestamp = this->timestamp();;
-			while (!process->isCompleted()) {
+			while (!process->isCompleted(timestamp)) {
 				timestamp = this->timestamp();
 				updateInputs(timestamp);
 				process->update(timestamp);
@@ -215,7 +220,7 @@ enum class LEDPattern : uint8_t {
 		void runProcess(ProcessClass &process) {
 			static_assert(std::is_base_of<Process, ProcessClass>::value);
 			float timestamp = this->timestamp();;
-			while (!process.isCompleted()) {
+			while (!process.isCompleted(timestamp)) {
 				timestamp = this->timestamp();
 				updateInputs(timestamp);
 				process.update(timestamp);
@@ -234,7 +239,7 @@ enum class LEDPattern : uint8_t {
 		void runProcess(ProcessClass &&process) {
 			static_assert(std::is_base_of<Process, ProcessClass>::value);
 			float timestamp = this->timestamp();;
-			while (!process.isCompleted()) {
+			while (!process.isCompleted(timestamp)) {
 				timestamp = this->timestamp();
 				updateInputs(timestamp);
 				process.update(timestamp);
@@ -280,6 +285,41 @@ enum class LEDPattern : uint8_t {
 		 */
 		void setLEDPattern(LEDPattern ledPattern);
 
+		/**
+		 * Возвращает текущее положение робота (X)
+		 */
+		float getX();
+
+		/**
+		 * Возвращает текущее положение робота (Y)
+		 */
+		float getY();
+
+		/**
+		 * Возвращает текущее положение робота (угол поворота в радианах)
+		 */
+		float getRotation();
+
+		/**
+		 * Устанавливает расстояние между колёсами (колёсная база) в градусах енкодера
+		 */
+		void setDistanceBetweenWheels(float encoderDistance);
+
+		/**
+		 * Устанавливает текущее положение робота (X)
+		 */
+		void setX(float x);
+
+		/**
+		 * Устанавливает текущее положение робота (Y)
+		 */
+		void setY(float y);
+
+		/**
+		 * Устанавливает текущее положение робота (угол поворота в радианах)
+		 */
+		void setRotation(float rotation);
+
 	private:
 		std::map<Sensor::Port, std::shared_ptr<Sensor>> sensors;
 		std::map<Motor::Port, std::shared_ptr<Motor>> motors;
@@ -290,6 +330,19 @@ enum class LEDPattern : uint8_t {
 		float buttonStateChangingTimestamp[buttonsCount];
 		bool buttonIsDown[buttonsCount];
 		std::vector<std::function<void()>> onButtonClickListeners;
+
+		// encoder
+		float distanceBetweenWheels;
+		// encoder
+		float x;
+		// encoder
+		float y;
+		// radians
+		float rotation;
+		// encoder
+		int prevLeftEncoder;
+		// encoder
+		int prevRightEncoder;
 	};
 }
 

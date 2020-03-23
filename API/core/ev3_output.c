@@ -253,6 +253,16 @@ bool OutputStop(uint8_t Outputs, bool useBrake)
   }
 }
 
+bool OutputProgramStart(void)
+{
+  if (!OutputInitialized())
+	return false;
+
+  int8_t cmd;
+  cmd = opProgramStart;
+  return WriteToPWMDevice(&cmd, 1) == 1;
+}
+
 bool OutputProgramStop(void)
 {
   if (!OutputInitialized())

@@ -15,7 +15,6 @@ GetColorProcess::GetColorProcess(const std::shared_ptr<ColorSensor> &colorSensor
 	, duration(duration)
 	, modes()
 	, startTimestamp(0)
-	, detectedColor(NO_COLOR)
 	, completed(false) {
 
 }
@@ -32,17 +31,21 @@ void GetColorProcess::update(float secondsFromStart) {
 
 	auto colorIndex = colorSensor->getColorIndex(colors, blackVThreshold, whiteSThreshold, whiteVThreshold);
 	if (colorIndex < 0) {
-		colorIndex = colors.size() - 1 - NO_COLOR;
+		colorIndex = colors.size() - 1 - colorIndex;
 	}
 	modes[colorIndex]++;
 	completed = (secondsFromStart - startTimestamp >= duration);
 }
 
-void GetColorProcess::onCompleted(float secondsFromStart) {
-	Process::onCompleted(secondsFromStart);
+bool GetColorProcess::isCompleted(float secondsFromStart) {
+	Process::isCompleted(secondsFromStart);
+	return completed;
+}
+
+int GetColorProcess::getColor() const {
 	// среди найденных цветов ищем наиболее встречаемый
 	int maxCount = 0;
-	detectedColor = modes.size() - 1 - NO_COLOR;
+	int detectedColor = modes.size() - 1 - NO_COLOR;
 	for (size_t i = 0; i < modes.size(); ++i) {
 		if (modes[i] > maxCount) {
 			maxCount = modes[i];
@@ -52,14 +55,6 @@ void GetColorProcess::onCompleted(float secondsFromStart) {
 	if (detectedColor >= (int)colors.size()) {
 		detectedColor = (int)colors.size() - 1 - detectedColor;
 	}
-}
-
-bool GetColorProcess::isCompleted(float secondsFromStart) {
-	Process::isCompleted(secondsFromStart);
-	return completed;
-}
-
-int GetColorProcess::getColor() const {
 	return detectedColor;
 }
 

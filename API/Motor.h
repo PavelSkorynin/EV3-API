@@ -124,12 +124,26 @@ public:
 	 * Актуальная мощность мотора, установленная на последней итерации
 	 * @return мощность мотора в интервале [0, 100]
 	 */
+	float getActualPower() const;
+
+	/**
+	 * Установленная через setPower мощность мотора. Может отличаться от актуальной мощности,
+	 * если мотор ещё не раскрутился.
+	 * @return мощность мотора в интервале [0, 100]
+	 */
 	int getPower() const;
 
 	/**
 	 * Сбрасывает значение энкодера
 	 */
 	void resetEncoder();
+
+	/**
+	 * Блокирует мотор на указанном значении енкодера
+	 * @param targetEncoder целевое значение енкодера
+	 */
+	void blockOnEncoder(int targetEncoder);
+
 	/**
 	 * Максимальное ускорение мотора в градусах на секунду в квадрате. По умолчанию 2500.
 	 * Допустимые значения лежат в интервале примерно [1000, 10000]
@@ -144,6 +158,22 @@ public:
 	void setEncoderScale(float scale);
 
 	/**
+	 * Установка скорости на максимальной мощности (100).
+	 * Используется для калибровки моторов и корректного рассчёта ускорения.
+	 * По умолчанию используется значение 850 - большой мотор с небольшой нагрузкой
+	 * @param degreesPerSecond скорость в градусах за секунду
+	 */
+	void setSpeedOnMaxPower(float degreesPerSecond);
+
+	/**
+	 * Минимальная мощность, необходимая для старта.
+	 * Используется для преодоления силы трения на старте.
+	 * По умолчанию используется значение 3
+	 * @param startUpPower мощность в интервале [0, 100]
+	 */
+	void setStartUpPower(int startUpPower);
+
+	/**
 	 * Обновляет значение энкодера
 	 * @param timestampSeconds текущее время в секундах
 	 */
@@ -154,22 +184,35 @@ public:
 	 */
 	void updateOutputs(float timestampSeconds) override;
 
+	inline float getMaxAccelleration() const { return maxAcceleration; }
+
+	inline float getEncoderScale() const { return encoderScale; }
+
+	inline float getSpeedOnMaxPower() const { return powerToSpeedRatio * 100; }
+
+	inline int getStartUpPower() const { return startUpPower; }
+
+	/**
+	 * Проверяет, занят ли мотор. Мотор может быть занят, когда выполняются продолжительные операции.
+	 * Например, OutputStepPowerEx, OutputStepSyncEx и пр.
+	 */
+	bool isBusy();
+
 protected:
 	Port port;
-	Direction direction;
-	float maxAcceleration;
-	// max detected speed; used to calibrate power
-	float maxSpeed;
-	// actual speed measured at lastTimestamp
-	float lastSpeed;
-	float lastTimestamp;
+	Direction direction = Direction::FORWARD;
+	float finePower = 0;
+	float prevTimestamp = 0;
 
-	int8_t actualSpeed;
-	int zeroEncoder;
-	int encoder;
-	int tacho;
+	int8_t actualSpeed = 0;
+	int zeroEncoder = 0;
+	int encoder = 0;
+	int tacho = 0;
 
-	float encoderScale;
+	float maxAcceleration = 2500;
+	float encoderScale = 1;
+	float powerToSpeedRatio = 8.5f;
+	int startUpPower = 3;
 
 	WireI speedInput;
 	WireI encoderInput;

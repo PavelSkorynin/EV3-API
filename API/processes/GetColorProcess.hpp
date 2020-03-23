@@ -18,7 +18,6 @@ class GetColorProcess : public virtual Process {
 public:
 	GetColorProcess(const std::shared_ptr<ColorSensor> &colorSensor, std::vector<int> colors, float duration = 0.1f);
 
-	virtual void onCompleted(float secondsFromStart) override;
 	virtual void update(float secondsFromStart) override;
 	virtual void onStarted(float secondsFromStart) override;
 	virtual bool isCompleted(float secondsFromStart) override;
@@ -54,7 +53,6 @@ protected:
 	// мода
 	std::vector<int> modes;
 	float startTimestamp;
-	int detectedColor;
 	bool completed;
 
 	unsigned char blackVThreshold = 10;

@@ -15,6 +15,7 @@
 #include <chrono>
 #include <thread>
 #include <type_traits>
+#include <cmath>
 
 namespace ev3 {
 
@@ -34,6 +35,10 @@ namespace ev3 {
 		, buttonStateChangingTimestamp {0, 0, 0, 0, 0, 0}
 		, buttonIsDown {false, false, false, false, false, false}
 		, onButtonClickListeners(6, []() {})
+		, distanceBetweenWheels(250)
+		, x(0), y(0), rotation(0)
+		, prevLeftEncoder(0)
+		, prevRightEncoder(0)
 	{
 		InitEV3();
 	}
@@ -54,6 +59,10 @@ namespace ev3 {
 			updateInputs(timestamp);
 			updateOutputs(timestamp);
 		}
+	}
+
+	bool EV3::lcdClean() {
+		return LcdClean();
 	}
 
 	void EV3::playSound(unsigned short frequency, float duration, float volume) {
@@ -152,6 +161,32 @@ namespace ev3 {
 			}
 		}
 
+		auto leftMotor = motors[Motor::Port::A];
+		auto rightMotor = motors[Motor::Port::B];
+		auto leftEncoder = leftMotor->getEncoder();
+		auto rightEncoder = rightMotor->getEncoder();
+		auto L = leftEncoder - prevLeftEncoder;
+		auto R = rightEncoder - prevRightEncoder;
+
+		float deltaRotation = (L - R) / (float)distanceBetweenWheels;
+
+		if (L != R) {
+			float deltaX = distanceBetweenWheels / 2 * sinf(deltaRotation) * (L + R) / (L - R);
+			float deltaY = distanceBetweenWheels / 2 * cosf(deltaRotation) * (L + R) / (L - R);
+			if (abs(L) < abs(R)) {
+				deltaX = -deltaX;
+				deltaY = -deltaY;
+			}
+
+			x += deltaX * cosf(rotation) + deltaY * sinf(rotation);
+			y += deltaY * cosf(rotation) - deltaX * sinf(rotation);
+		}
+
+		rotation += deltaRotation;
+
+		prevLeftEncoder = leftEncoder;
+		prevRightEncoder = rightEncoder;
+
 		auto buttonsState = CheckButtonsNoWait();
 		for (int buttonId = 0; buttonId < buttonsCount; ++buttonId) {
 			if (buttonIsDown[buttonId] == ((buttonsState & (1 << buttonId)) != 0)) {
@@ -198,6 +233,34 @@ namespace ev3 {
 
 	void EV3::setLEDPattern(LEDPattern ledPattern) {
 		SetLedPattern((uint8_t)ledPattern);
+	}
+
+	float EV3::getX() {
+		return x;
+	}
+
+	float EV3::getY() {
+		return y;
+	}
+
+	float EV3::getRotation() {
+		return rotation;
+	}
+
+	void EV3::setDistanceBetweenWheels(float encoderDistance) {
+		distanceBetweenWheels = encoderDistance;
+	}
+
+	void EV3::setX(float x) {
+		this->x = x;
+	}
+
+	void EV3::setY(float y) {
+		this->y = y;
+	}
+
+	void EV3::setRotation(float rotation) {
+		this->rotation = rotation;
 	}
 
 }

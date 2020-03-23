@@ -29,17 +29,18 @@ protected:
 	template<class ProcessClass>
 	void addProcess(ProcessClass&& process) {
 		static_assert(std::is_base_of<Process, ProcessClass>::value);
-		group.emplace_back(std::make_shared<ProcessClass>(process));
+		temporaryProcesses.emplace_back(std::make_shared<ProcessClass>(process));
+		group.push_back(temporaryProcesses.back().get());
 	}
 	template<class ProcessClass>
 	void addProcess(ProcessClass& process) {
 		static_assert(std::is_base_of<Process, ProcessClass>::value);
-		group.emplace_back(std::make_shared<ProcessClass>(process));
+		group.push_back(&process);
 	}
 	template<class ProcessClass>
 	void addProcess(std::shared_ptr<ProcessClass> process) {
 		static_assert(std::is_base_of<Process, ProcessClass>::value);
-		group.emplace_back(process);
+		group.push_back(process.get());
 	}
 
 	template<class ProcessClassA, class ProcessClassB>
@@ -115,7 +116,8 @@ protected:
 	friend ProcessGroup& operator&(ProcessClassA& processA, ProcessGroupAnd& processB);
 
 protected:
-	std::vector<std::shared_ptr<Process>> group;
+	std::vector<Process*> group;
+	std::vector<std::shared_ptr<Process>> temporaryProcesses;
 	bool completeIfAnyIsCompleted;
 };
 

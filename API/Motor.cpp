@@ -6,6 +6,7 @@
  */
 
 #include "Motor.h"
+#include "EV3Math.h"
 
 #include "core/ev3_output.h"
 #include "core/ev3_lcd.h"
@@ -21,13 +22,6 @@ inline uint8_t P(const T &value) {
 
 Motor::Motor(Port port)
 	: port(port)
-	, direction(Direction::FORWARD)
-	, maxAcceleration(2500.0f)
-	, maxSpeed(70.0f) // ~20% of battery
-	, lastSpeed(0)
-	, lastTimestamp(0)
-	, zeroEncoder(0)
-	, encoderScale(1)
 	, speedInput([this]() -> int { return this->direction == Direction::FORWARD ? this->actualSpeed : -this->actualSpeed; })
 	, encoderInput([this]() -> int {
 		return round(encoderScale * (this->direction == Direction::FORWARD
@@ -95,6 +89,10 @@ void Motor::setPower(const WireI & output) {
 	powerOutput = std::make_shared<WireI>(output);
 }
 
+float Motor::getActualPower() const {
+	return (int)roundf(finePower);
+}
+
 int Motor::getPower() const {
 	return powerOutput->getValue();
 }
@@ -102,6 +100,13 @@ int Motor::getPower() const {
 void Motor::resetEncoder() {
 	zeroEncoder = encoder;
 }
+
+void Motor::blockOnEncoder(int targetEncoder) {
+	setPower(WireI([&, targetEncoder] () -> int {
+		return clamp<int>(targetEncoder - encoder, -100, 100);
+	}));
+}
+
 
 void Motor::setMaxAccelleration(float maxAcceleration) {
 	this->maxAcceleration = maxAcceleration;
@@ -111,39 +116,59 @@ void Motor::setEncoderScale(float scale) {
 	this->encoderScale = scale;
 }
 
+void Motor::setSpeedOnMaxPower(float degreesPerSecond) {
+	powerToSpeedRatio = degreesPerSecond / 100;
+}
+
+void Motor::setStartUpPower(int startUpPower) {
+	this->startUpPower = startUpPower;
+}
+
+
+
 void Motor::updateInputs(float timestampSeconds) {
 	// tacho or sensor ??
 	OutputRead(P(port), &actualSpeed, &tacho, &encoder);
-	if (abs(actualSpeed) > maxSpeed) {
-		maxSpeed = abs(actualSpeed);
-	}
-	if (actualSpeed != lastSpeed) {
-		lastSpeed = actualSpeed;
-		lastTimestamp = timestampSeconds;
-	}
 }
 
 void Motor::updateOutputs(float timestampSeconds) {
 	if (!powerOutput) {
 		return;
 	}
-	int targetPower = powerOutput->getValue();
-	int currentSpeed = direction == Direction::FORWARD ? actualSpeed : -actualSpeed;;
-
-	float dSpeed = targetPower * maxSpeed / 100.0f - currentSpeed;
-	float delta = timestampSeconds - lastTimestamp;
-	// too small step
-	if (delta < 10e-9) {
+	if ((port == Port::C || port == Port::D) && MotorBusy(P(port))) {
 		return;
 	}
-	float acceleration = maxAcceleration * powf(1.07f, fabsf(currentSpeed));
-	if (fabsf(dSpeed) / delta > acceleration) {
-		int sign = dSpeed >= 0 ? 1 : -1;
-		targetPower = (int)(currentSpeed * 100.0f / maxSpeed + sign * delta * acceleration);
+	float dt = timestampSeconds - prevTimestamp;
+	prevTimestamp = timestampSeconds;
+
+	float targetPower = powerOutput->getValue();
+
+	if (fabs((targetPower - finePower) * powerToSpeedRatio) > maxAcceleration * dt) {
+		if (targetPower > finePower) {
+			finePower += maxAcceleration * dt / powerToSpeedRatio;
+		} else {
+			finePower -= maxAcceleration * dt / powerToSpeedRatio;
+		}
+	} else {
+		finePower = targetPower;
 	}
-	if (!OutputPower(P(port), targetPower)) {
+
+	int outPower = roundf(finePower);
+	if (std::abs(targetPower) > 1 && std::abs(outPower) < startUpPower) {
+		if (outPower > 0) {
+			outPower = startUpPower;
+		} else {
+			outPower = -startUpPower;
+		}
+	}
+
+	if (!OutputPower(P(port), outPower)) {
 		LcdTextf(0, 0, 60, "Output power error %d", P(port));
 	}
+}
+
+bool Motor::isBusy() {
+	return MotorBusy(P(port));
 }
 
 } /* namespace ev3 */

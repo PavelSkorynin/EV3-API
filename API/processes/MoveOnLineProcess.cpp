@@ -34,14 +34,14 @@ void MoveOnLineProcess::onStarted(float secondsFromStart) {
 
 	// устанавливаем правила для обновления скорости моторов
 	// пересчёт значений будет происходить автоматически при обновлении выходов в EV3
-	leftMotor->setPower(std::function<int()>([&] () -> int {
+	leftMotor->setPower(WireI([&] () -> int {
 		auto delta = clamp<float>(maxPower * pd.getPower() / 50.0f, -abs(maxPower), abs(maxPower));
 		if (delta > 0) {
 			return maxPower - delta;
 		}
 		return maxPower;
 	}));
-	rightMotor->setPower(std::function<int()>([&] () -> int {
+	rightMotor->setPower(WireI([&] () -> int {
 		auto delta = clamp<float>(maxPower * pd.getPower() / 50.0f, -abs(maxPower), abs(maxPower));
 		if (delta < 0) {
 			return maxPower + delta;

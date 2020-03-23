@@ -54,6 +54,8 @@ bool OutputClose(void);
 
 bool OutputExit(void);
 
+bool OutputProgramStart(void);
+
 bool OutputProgramStop(void);
 
 bool OutputInitialized(void);
