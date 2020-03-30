@@ -72,6 +72,8 @@ protected:
 	MotorPtr rightMotor;
 	int leftEncoderDistance;
 	int rightEncoderDistance;
+	int leftEncoderStart = 0;
+	int rightEncoderStart = 0;
 	int maxPower;
 	int minPower;
 	float anchorEncoder;

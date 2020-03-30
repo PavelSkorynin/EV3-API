@@ -39,6 +39,8 @@ public:
 protected:
 	MotorPtr leftMotor;
 	MotorPtr rightMotor;
+	int leftEncoderStart = 0;
+	int rightEncoderStart = 0;
 	int leftEncoderDistance;
 	int rightEncoderDistance;
 	int maxPower;

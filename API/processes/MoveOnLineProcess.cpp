@@ -12,21 +12,21 @@ namespace ev3 {
 
 MoveOnLineProcess::MoveOnLineProcess(MotorPtr leftMotor,
 		MotorPtr rightMotor, SensorPtr leftLight,
-		SensorPtr rightLight, int encoderDistance, int maxPower)
+		SensorPtr rightLight, int encoderDistance, int maxPower_)
 	: leftMotor(leftMotor)
 	, rightMotor(rightMotor)
 	, leftLight(leftLight)
 	, rightLight(rightLight)
-	, encoderDistance(encoderDistance)
-	, maxPower(maxPower)
+	, encoderDistance(encoderDistance * (maxPower_ < 0 ? -1 : 1))
+	, maxPower(abs(maxPower_))
 	, pd(0.3f, 0, 0.9f) {
 }
 
 void MoveOnLineProcess::onStarted(float secondsFromStart) {
 	Process::onStarted(secondsFromStart);
 
-	leftMotor->resetEncoder();
-	rightMotor->resetEncoder();
+	leftEncoderStart = leftMotor->getEncoder();
+	rightEncoderStart = rightMotor->getEncoder();
 
 	// устанавливаем правило для вычисления ошибки в ПД-регуляторе
 	// пересчёт значений будет происходить автоматически при обновлении ПД
@@ -58,7 +58,7 @@ void MoveOnLineProcess::update(float secondsFromStart) {
 bool MoveOnLineProcess::isCompleted(float secondsFromStart) {
 	Process::isCompleted(secondsFromStart);
 	// останавливаемся, когда среднее значение на енкодерах достигло желаемого
-	return (leftMotor->getEncoder() + rightMotor->getEncoder()) >= encoderDistance * 2;
+	return (leftMotor->getEncoder() + rightMotor->getEncoder() - leftEncoderStart - rightEncoderStart) >= encoderDistance * 2;
 }
 
 void MoveOnLineProcess::onCompleted(float secondsFromStart) {

@@ -35,7 +35,7 @@ namespace ev3 {
 		, buttonStateChangingTimestamp {0, 0, 0, 0, 0, 0}
 		, buttonIsDown {false, false, false, false, false, false}
 		, onButtonClickListeners(6, []() {})
-		, distanceBetweenWheels(250)
+		, distanceBetweenWheels(300)
 		, x(0), y(0), rotation(0)
 		, prevLeftEncoder(0)
 		, prevRightEncoder(0)
@@ -161,31 +161,42 @@ namespace ev3 {
 			}
 		}
 
-		auto leftMotor = motors[Motor::Port::A];
-		auto rightMotor = motors[Motor::Port::B];
-		auto leftEncoder = leftMotor->getEncoder();
-		auto rightEncoder = rightMotor->getEncoder();
-		auto L = leftEncoder - prevLeftEncoder;
-		auto R = rightEncoder - prevRightEncoder;
+		if (motors.find(Motor::Port::A) != motors.end()
+				&& motors.find(Motor::Port::B) != motors.end()) {
+			auto leftMotor = motors[Motor::Port::A];
+			auto rightMotor = motors[Motor::Port::B];
+			auto leftEncoder = leftMotor->getEncoder();
+			auto rightEncoder = rightMotor->getEncoder();
+			float L = leftEncoder - prevLeftEncoder;
+			float R = rightEncoder - prevRightEncoder;
 
-		float deltaRotation = (L - R) / (float)distanceBetweenWheels;
+			float deltaRotation = (L - R) / (float)distanceBetweenWheels;
 
-		if (L != R) {
-			float deltaX = distanceBetweenWheels / 2 * sinf(deltaRotation) * (L + R) / (L - R);
-			float deltaY = distanceBetweenWheels / 2 * cosf(deltaRotation) * (L + R) / (L - R);
-			if (abs(L) < abs(R)) {
-				deltaX = -deltaX;
-				deltaY = -deltaY;
+			if (L != R) {
+				/*
+				float deltaX = distanceBetweenWheels / 2 * (1 - cosf(deltaRotation)) * (L + R) / (L - R);
+				float deltaY = distanceBetweenWheels / 2 * sinf(deltaRotation) * (L + R) / (L - R);
+				if (abs(L) < abs(R)) {
+					deltaX = -deltaX;
+					deltaY = -deltaY;
+				}
+
+				x += deltaX * cosf(rotation) + deltaY * sinf(rotation);
+				y += deltaY * cosf(rotation) - deltaX * sinf(rotation);
+				*/
+				float deltaY = (L + R) / 2;
+				x += deltaY * sinf(rotation + deltaRotation / 2);
+				y += deltaY * cosf(rotation + deltaRotation / 2);
+			} else {
+				x += L * sinf(rotation);
+				y += L * cosf(rotation);
 			}
 
-			x += deltaX * cosf(rotation) + deltaY * sinf(rotation);
-			y += deltaY * cosf(rotation) - deltaX * sinf(rotation);
+			rotation += deltaRotation;
+
+			prevLeftEncoder = leftEncoder;
+			prevRightEncoder = rightEncoder;
 		}
-
-		rotation += deltaRotation;
-
-		prevLeftEncoder = leftEncoder;
-		prevRightEncoder = rightEncoder;
 
 		auto buttonsState = CheckButtonsNoWait();
 		for (int buttonId = 0; buttonId < buttonsCount; ++buttonId) {

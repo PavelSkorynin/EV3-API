@@ -46,6 +46,8 @@ protected:
 	SensorPtr leftLight;
 	SensorPtr rightLight;
 	int encoderDistance;
+	int leftEncoderStart = 0;
+	int rightEncoderStart = 0;
 	int maxPower;
 
 	PID pd;

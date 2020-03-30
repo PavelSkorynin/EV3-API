@@ -10,26 +10,32 @@
 #include <EV3Math.h>
 #include <cmath>
 
+#include <core/ev3_lcd.h>
+
 namespace ev3 {
 
 StopByEncoderOnArcProcess::StopByEncoderOnArcProcess(MotorPtr leftMotor_, MotorPtr rightMotor_,
 		int leftEncoderDistance_, int rightEncoderDistance_, int maxPower_)
 	: leftMotor(leftMotor_)
 	, rightMotor(rightMotor_)
-	, leftEncoderDistance(leftEncoderDistance_)
-	, rightEncoderDistance(rightEncoderDistance_)
-	, maxPower(maxPower_)
+	, leftEncoderDistance(leftEncoderDistance_ * (maxPower_ < 0 ? -1 : 1))
+	, rightEncoderDistance(rightEncoderDistance_ * (maxPower_ < 0 ? -1 : 1))
+	, maxPower(abs(maxPower_))
 	, minPower(7)
-	, anchorEncoder(50)
+	, anchorEncoder(100)
 	, powerThreshold(5)
 	, speedThreshold(3)
 	, powerPD(0.5f, 0.0f, 1.2f)
-	, moveByEncoderOnArcProcess(std::make_shared<MoveByEncoderOnArcProcess>(leftMotor_, rightMotor_, leftEncoderDistance_ * 2, rightEncoderDistance_ * 2, maxPower_)) {
+	, moveByEncoderOnArcProcess(std::make_shared<MoveByEncoderOnArcProcess>(leftMotor_, rightMotor_, leftEncoderDistance_, rightEncoderDistance_, maxPower_)) {
 }
 
 void StopByEncoderOnArcProcess::onStarted(float secondsFromStart) {
 	Process::onStarted(secondsFromStart);
-	powerPD.setError(WireF(abs(leftEncoderDistance) + abs(rightEncoderDistance)) - WireF(leftMotor->getEncoderWire()) - WireF(leftMotor->getEncoderWire()));
+
+	leftEncoderStart = leftMotor->getEncoder();
+	rightEncoderStart = rightMotor->getEncoder();
+
+	powerPD.setError(WireF(leftEncoderDistance + rightEncoderDistance + leftEncoderStart + rightEncoderStart) - WireF(leftMotor->getEncoderWire() + rightMotor->getEncoderWire()));
 }
 
 void StopByEncoderOnArcProcess::update(float secondsFromStart) {
@@ -40,9 +46,9 @@ void StopByEncoderOnArcProcess::update(float secondsFromStart) {
 	const float value = powerPD.getPower() / anchorEncoder;
 	float relativePower = 0;
 	if (value > 0) {
-		relativePower = clamp<int>(powf(value, 0.8f) * anchorEncoder * scale + minPower, -abs(maxPower), abs(maxPower));
+		relativePower = clamp<int>(powf(value, 0.8f) * anchorEncoder * scale + minPower, -maxPower, maxPower);
 	} else {
-		relativePower = clamp<int>(-powf(-value, 0.8f) * anchorEncoder * scale - minPower, -abs(maxPower), abs(maxPower));
+		relativePower = clamp<int>(powf(-value, 0.8f) * anchorEncoder * scale + minPower, -maxPower, maxPower);
 	}
 
 	moveByEncoderOnArcProcess->setMaxPower(relativePower);
@@ -51,7 +57,9 @@ void StopByEncoderOnArcProcess::update(float secondsFromStart) {
 
 bool StopByEncoderOnArcProcess::isCompleted(float secondsFromStart) {
 	Process::isCompleted(secondsFromStart);
-	return powerPD.getPower() < powerThreshold && abs(leftMotor->getActualSpeed()) < speedThreshold && abs(rightMotor->getActualSpeed()) < speedThreshold;
+	auto power = leftEncoderDistance + rightEncoderDistance + leftEncoderStart + rightEncoderStart - leftMotor->getEncoder() - rightMotor->getEncoder();
+	return (abs(power) < powerThreshold && abs(leftMotor->getActualSpeed()) < speedThreshold && abs(rightMotor->getActualSpeed()) < speedThreshold)
+			|| moveByEncoderOnArcProcess->isCompleted(secondsFromStart);
 }
 
 void StopByEncoderOnArcProcess::onCompleted(float secondsFromStart) {
