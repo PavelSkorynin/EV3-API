@@ -22,6 +22,8 @@ StopByEncoderOnArcProcess::StopByEncoderOnArcProcess(MotorPtr leftMotor_, MotorP
 	, rightEncoderDistance(rightEncoderDistance_ * (maxPower_ < 0 ? -1 : 1))
 	, maxPower(abs(maxPower_))
 	, minPower(7)
+	, dirLeft(leftEncoderDistance < 0 ? -1 : 1)
+	, dirRight(rightEncoderDistance < 0 ? -1 : 1)
 	, anchorEncoder(100)
 	, powerThreshold(5)
 	, speedThreshold(3)
@@ -35,7 +37,7 @@ void StopByEncoderOnArcProcess::onStarted(float secondsFromStart) {
 	leftEncoderStart = leftMotor->getEncoder();
 	rightEncoderStart = rightMotor->getEncoder();
 
-	powerPD.setError(WireF(leftEncoderDistance + rightEncoderDistance + leftEncoderStart + rightEncoderStart) - WireF(leftMotor->getEncoderWire() + rightMotor->getEncoderWire()));
+	powerPD.setError(WireF((leftEncoderDistance + leftEncoderStart) * dirLeft) + WireF((rightEncoderDistance + rightEncoderStart) * dirRight) - WireF(leftMotor->getEncoderWire() * dirLeft) - WireF(rightMotor->getEncoderWire() * dirRight));
 }
 
 void StopByEncoderOnArcProcess::update(float secondsFromStart) {
@@ -45,11 +47,7 @@ void StopByEncoderOnArcProcess::update(float secondsFromStart) {
 	powerPD.update(secondsFromStart);
 	const float value = powerPD.getPower() / anchorEncoder;
 	float relativePower = 0;
-	if (value > 0) {
-		relativePower = clamp<int>(powf(value, 0.8f) * anchorEncoder * scale + minPower, -maxPower, maxPower);
-	} else {
-		relativePower = clamp<int>(powf(-value, 0.8f) * anchorEncoder * scale + minPower, -maxPower, maxPower);
-	}
+	relativePower = clamp<int>(powf(fabsf(value), 0.8f) * anchorEncoder * scale + minPower, -maxPower, maxPower);
 
 	moveByEncoderOnArcProcess->setMaxPower(relativePower);
 	moveByEncoderOnArcProcess->update(secondsFromStart);
@@ -57,7 +55,7 @@ void StopByEncoderOnArcProcess::update(float secondsFromStart) {
 
 bool StopByEncoderOnArcProcess::isCompleted(float secondsFromStart) {
 	Process::isCompleted(secondsFromStart);
-	auto power = leftEncoderDistance + rightEncoderDistance + leftEncoderStart + rightEncoderStart - leftMotor->getEncoder() - rightMotor->getEncoder();
+	auto power = (leftEncoderDistance + leftEncoderStart - leftMotor->getEncoder()) * dirLeft + (rightEncoderDistance + rightEncoderStart - rightMotor->getEncoder()) * dirRight;
 	return (abs(power) < powerThreshold && abs(leftMotor->getActualSpeed()) < speedThreshold && abs(rightMotor->getActualSpeed()) < speedThreshold)
 			|| moveByEncoderOnArcProcess->isCompleted(secondsFromStart);
 }

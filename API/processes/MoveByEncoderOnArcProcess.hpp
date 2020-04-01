@@ -45,9 +45,12 @@ protected:
 	int rightEncoderDistance;
 	int maxPower;
 
+	const float scaleLeft;
+	const float scaleRight;
+	const int dirLeft;
+	const int dirRight;
+
 	PID pd;
-	bool toggleLeftMotor;
-	bool toggleRightMotor;
 };
 
 }

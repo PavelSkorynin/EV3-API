@@ -35,7 +35,8 @@ namespace ev3 {
 		, buttonStateChangingTimestamp {0, 0, 0, 0, 0, 0}
 		, buttonIsDown {false, false, false, false, false, false}
 		, onButtonClickListeners(6, []() {})
-		, distanceBetweenWheels(300)
+		// distance between middle wheels on middle motors
+		, distanceBetweenWheels(312)
 		, x(0), y(0), rotation(0)
 		, prevLeftEncoder(0)
 		, prevRightEncoder(0)

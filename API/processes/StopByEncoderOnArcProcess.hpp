@@ -76,6 +76,8 @@ protected:
 	int rightEncoderStart = 0;
 	int maxPower;
 	int minPower;
+	const int dirLeft;
+	const int dirRight;
 	float anchorEncoder;
 	int powerThreshold;
 	int speedThreshold;
