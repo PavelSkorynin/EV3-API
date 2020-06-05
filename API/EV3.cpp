@@ -122,6 +122,14 @@ namespace ev3 {
 		return std::dynamic_pointer_cast<ReflectedLightSensor>(sensorPtr);
 	}
 
+	std::shared_ptr<RawReflectedLightSensor> EV3::getRawReflectedLightSensor(Sensor::Port port) {
+		auto& sensorPtr = sensors[port];
+		if (!sensorPtr || !std::dynamic_pointer_cast<RawReflectedLightSensor>(sensorPtr)) {
+			sensorPtr.reset(new RawReflectedLightSensor(port));
+		}
+		return std::dynamic_pointer_cast<RawReflectedLightSensor>(sensorPtr);
+	}
+
 
 	std::shared_ptr<ColorSensor> EV3::getColorSensor(Sensor::Port port) {
 		auto& sensorPtr = sensors[port];

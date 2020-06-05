@@ -93,6 +93,7 @@ int SetIRBeaconCH(int sensorPort, int channel);
 #define COL_AMBIENT 3	// Ambient
 #define COL_COLOR 4	// Color
 #define COL_COLOR_RGB 24	// "Raw" Color in RGB
+#define COL_REFRAW 25	// Reflected light raw
 
 //Ultrasonic
 #define US_DIST_CM 5	// Dist in cm

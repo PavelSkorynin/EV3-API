@@ -54,6 +54,7 @@
 #define COL_REFLECT_MODE 0 	// Reflect
 #define COL_AMBIENT_MODE 1 	// Ambient
 #define COL_COLOR_MODE   2 	// Color
+#define COL_REFRAW_MODE 3 	// Reflected Raw
 #define COL_COLOR_RGB_MODE 4 	// RAW (RGB) Color
 
 // Ultrasonic
@@ -251,6 +252,8 @@ void* ReadSensorData(int sensorPort)
 			return readUartSensor(sensorPort);
 		case COL_COLOR:
 			return readUartSensor(sensorPort);
+		case COL_REFRAW:
+			return readUartSensor(sensorPort);
 		case COL_COLOR_RGB:
 			return readUartSensor(sensorPort);
 			// Ultrasonic
@@ -326,15 +329,20 @@ int ReadSensor(int sensorPort)
 			return *((DATA16*)data)&0x00FF;
 		case COL_COLOR:
 			return *((DATA16*)data)&0x000F;
+		case COL_REFRAW: {
+            uint8_t bytes[4];
+            memcpy(bytes, data, sizeof bytes);
+
+            return (bytes[1] << 8) | bytes[0];
+		}
 		case COL_COLOR_RGB: {
-#define TO_8BIT(x) (((x) >> 2) & 0xFF)
+			#define TO_8BIT(x) (((x) >> 2) & 0xFF)
 			uint16_t rgb[3];
 			memcpy(rgb, data, sizeof rgb);
 
 			return (TO_8BIT(rgb[0]) << 16)
 			     | (TO_8BIT(rgb[1]) << 8)
 			     | (TO_8BIT(rgb[2]));
-
 		}
 			// Ultrasonic
 		case US_DIST_CM:
@@ -451,6 +459,11 @@ int SetAllSensorMode(int name_1, int name_2, int name_3, int name_4)
 				devCon.Connection[sensorPort] 	= CONN_INPUT_UART;
 				devCon.Type[sensorPort] 		= COL_TYPE;
 				devCon.Mode[sensorPort] 		= COL_COLOR_MODE;
+				break;
+			case COL_REFRAW:
+				devCon.Connection[sensorPort]   = CONN_INPUT_UART;
+				devCon.Type[sensorPort]         = COL_TYPE;
+				devCon.Mode[sensorPort]         = COL_REFRAW_MODE;
 				break;
 			case COL_COLOR_RGB:
 				devCon.Connection[sensorPort] 	= CONN_INPUT_UART;

@@ -253,6 +253,44 @@ void FakeSensor::updateInputs(float timestampSeconds) {
 void FakeSensor::updateOutputs(float timestampSeconds) {
 }
 
+//////////////////////////////////////////////////////
+
+RawReflectedLightSensor::RawReflectedLightSensor(Port port)
+	: Sensor (port)
+	, minValue (0)
+	, maxValue (1024)
+{
+	setMode(ev3::Sensor::Mode::COLOR_REFLECT_RAW);
+	valueInput = WireI(std::function<int()>([this] () -> int {
+		// инвертируем интервал
+		return 1024 - (int)clamp<float>(round(map<float>(this->value, this->minValue, this->maxValue, 0, 1024)), 0, 1024);
+	}));
+}
+
+/**
+ * Возвращает сырое значение без масштабирования по шкале [min, max]
+ */
+int RawReflectedLightSensor::getRawValue() {
+	return value;
+}
+
+/**
+ * Минимальное исходное значение на датчике
+ * Используется для калибровки. getValue будет возвращать нормализованное значение
+ * @param minValue
+ */
+void RawReflectedLightSensor::setMinValue(int minValue) {
+	this->minValue = minValue;
+}
+
+/**
+ * Максимальное исходное значение на датчике
+ * Используется для калибровки. getValue будет возвращать нормализованное значение
+ * @param maxValue
+ */
+void RawReflectedLightSensor::setMaxValue(int maxValue) {
+	this->maxValue = maxValue;
+}
 
 
 } /* namespace ev3 */

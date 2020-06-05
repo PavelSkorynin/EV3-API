@@ -46,6 +46,7 @@ public:
 		COLOR_AMBIENT = COL_AMBIENT,	// Ambient
 		COLOR_COLOR = COL_COLOR,		// Color
 		COLOR_RGB = COL_COLOR_RGB,		// RGB Color
+		COLOR_REFLECT_RAW = COL_REFRAW,	// Reflect Raw
 
 		//Ultrasonic
 		ULTRASONIC_DISTANCE_CM = US_DIST_CM,	// Dist in cm
@@ -320,6 +321,37 @@ public:
 	 */
 	void updateOutputs(float timestampSeconds) override;
 
+};
+
+/**
+ * Датчик отражённого света. Возвращает "сырое" значение размерностью 16 бит.
+ * getValue возвращает нормализованное значение в интервале [0, 1024]
+ */
+class RawReflectedLightSensor : public Sensor {
+public:
+	RawReflectedLightSensor(Port port);
+
+	/**
+	 * Возвращает сырое значение без масштабирования по шкале [min, max]
+	 */
+	int getRawValue();
+
+	/**
+	 * Минимальное исходное значение на датчике
+	 * Используется для калибровки. getValue будет возвращать нормализованное значение
+	 * @param minValue
+	 */
+	void setMinValue(int minValue);
+	/**
+	 * Максимальное исходное значение на датчике
+	 * Используется для калибровки. getValue будет возвращать нормализованное значение
+	 * @param maxValue
+	 */
+	void setMaxValue(int maxValue);
+
+protected:
+	int minValue;
+	int maxValue;
 };
 
 typedef std::shared_ptr<Sensor> SensorPtr;

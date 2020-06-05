@@ -87,6 +87,12 @@ enum class LEDPattern : uint8_t {
 		 */
 		std::shared_ptr<ReflectedLightSensor> getReflectedLightSensor(Sensor::Port port);
 		/**
+		 * Метод для получения подключенного к определённому порту датчика отражённого света
+		 * @param port номер порта на блоке EV3, к которому подключен датчик
+		 * @return умный указатель на датчик
+		 */
+		std::shared_ptr<RawReflectedLightSensor> getRawReflectedLightSensor(Sensor::Port port);
+		/**
 		 * Метод для получения подключенного к определённому порту датчика цвета
 		 * @param port номер порта на блоке EV3, к которому подключен датчик
 		 * @return умный указатель на датчик
